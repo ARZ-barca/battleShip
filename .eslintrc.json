@@ -10,6 +10,6 @@
     "sourceType": "module"
   },
   "rules": {
-    "quotes": "warn"
+    "no-plusplus": "off"
   }
 }
