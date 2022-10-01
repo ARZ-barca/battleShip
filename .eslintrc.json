@@ -10,6 +10,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "no-plusplus": "off"
+    "no-plusplus": "off",
+    "no-undef": "off"
   }
 }
