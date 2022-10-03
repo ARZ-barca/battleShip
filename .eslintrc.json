@@ -11,6 +11,7 @@
   },
   "rules": {
     "no-plusplus": "off",
-    "no-undef": "off"
+    "no-undef": "off",
+    "no-param-reassign": "off"
   }
 }
