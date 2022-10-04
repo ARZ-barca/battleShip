@@ -12,6 +12,7 @@
   "rules": {
     "no-plusplus": "off",
     "no-undef": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "no-restricted-syntax": "off"
   }
 }

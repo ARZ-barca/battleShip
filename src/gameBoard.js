@@ -1,4 +1,4 @@
-import Ship from "./ships";
+import Ship, { predictShipPositions } from "./ships";
 
 // changes positions in game board
 function changeShipPositions(state, ship) {
@@ -27,7 +27,7 @@ function changeAroundShipPositions(state, ship) {
   });
 }
 
-// method for placing ships in gameboard
+// method for placing ships in gameboard (returns the ship)
 function createShip(state, createLoc, len, axis) {
   const ship = Ship(createLoc, len, axis);
   changeShipPositions(state, ship);
@@ -80,7 +80,7 @@ function removeShip(state, ship) {
   removeShipFromGameBoardShip(state, ship);
 }
 
-// adds the removeship to an object
+// adds removeship method to an object
 const addRemoveShip = (state) => ({
   removeShip: (ship) => {
     removeShip(state, ship);
@@ -88,16 +88,34 @@ const addRemoveShip = (state) => ({
 });
 
 // method for repositioning the ship
-// const addRepositionShip = (state) => ({
-//   rePositionShip(ship, createLoc, axis) {
-//     const shipPositions = Object.keys(ship.getLocation());
-//     for (let i = -1; i < 2; i += 1) {
-//       for (let j = -1; j < 2; j += 1) {
-//         state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] = empty;
-//       }
-//     }
-//   },
-// });
+function changeShipAxis(state, ship, newAxis) {
+  removeShip(state, ship);
+  const shipCreateLoc = ship.getCreateLoc();
+  const shipLen = ship.getLen();
+  const newShip = createShip(state, shipCreateLoc, shipLen, newAxis);
+  return newShip;
+}
+
+// adds changeShipAxix method to an object
+const addChangeShipAxis = (state) => ({
+  changeShipAxis: (ship, newAxis) => changeShipAxis(state, ship, newAxis),
+});
+
+// method that checks for placement validity
+function checkPlacement(state, createLoc, len, axis) {
+  const predictedPositions = predictShipPositions(createLoc, len, axis);
+  for (const p of predictedPositions) {
+    if (state.positions[String(p)] !== "empty") {
+      return false;
+    }
+  }
+  return true;
+}
+
+const addCheckPlacement = (state) => ({
+  checkPlacement: (createLoc, len, axis) =>
+    checkPlacement(state, createLoc, len, axis),
+});
 
 // method for getting the positions of game board
 const addGetPositions = (state) => ({
@@ -134,6 +152,8 @@ function GameBoard(gameBoardLen) {
     ...addGetShips(state),
     ...addCreateShip(state),
     ...addRemoveShip(state),
+    ...addChangeShipAxis(state),
+    ...addCheckPlacement(state),
   };
 }
 
