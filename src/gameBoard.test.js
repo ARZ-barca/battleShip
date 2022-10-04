@@ -164,11 +164,9 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
   });
 
   describe("check possibility of placing ships in different positions", () => {
-    let ship1;
-    let ship2;
     beforeAll(() => {
-      ship1 = gameBoard.createShip([0, 0], 4, "x");
-      ship2 = gameBoard.createShip([5, 5], 4, "y");
+      gameBoard.createShip([0, 0], 4, "x");
+      gameBoard.createShip([5, 5], 4, "y");
     });
     afterAll(() => {
       gameBoard = GameBoard(gameBoardLen);
