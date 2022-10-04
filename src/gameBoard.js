@@ -112,6 +112,7 @@ function checkPlacement(state, createLoc, len, axis) {
   return true;
 }
 
+// adds checkPlacement method to an object
 const addCheckPlacement = (state) => ({
   checkPlacement: (createLoc, len, axis) =>
     checkPlacement(state, createLoc, len, axis),
@@ -131,6 +132,75 @@ const addGetShips = (state) => ({
   },
 });
 
+// returns the ship that got hit
+function getHitShip(ships, attackLocation) {
+  for (const ship of ships) {
+    if (Object.keys(ship.getLocation()).includes(String(attackLocation))) {
+      return ship;
+    }
+  }
+}
+
+// toDo
+// mark around a ship in game board as unavailableShot for hit
+function markAroundShip(state, ship) {
+  const shipPositions = Object.keys(ship.getLocation());
+  shipPositions.forEach((p) => {
+    const pAsList = p.split(",");
+    for (let i = -1; i < 2; i += 1) {
+      for (let j = -1; j < 2; j += 1) {
+        if (
+          !state.missedShots.includes(
+            String([+pAsList[0] + i, +pAsList[1] + j])
+          ) &&
+          state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] ===
+            "unavailable"
+        ) {
+          state.unavailableShots.push(
+            String([+pAsList[0] + i, +pAsList[1] + j])
+          );
+        }
+      }
+    }
+  });
+}
+
+// checks an attack for hit or miss
+function checkAttack(state, attackLocation) {
+  if (state.positions[String(attackLocation)] === "ship") {
+    state.hitShots.push(String(attackLocation));
+    return true;
+  }
+  state.missedShots.push(String(attackLocation));
+  return false;
+}
+
+// method for receieveing an attack
+function receiveAttack(state, attackLocation) {
+  if (checkAttack(state, attackLocation)) {
+    const ship = getHitShip(state.ships, attackLocation);
+    ship.hit(attackLocation);
+    if (ship.isSunk()) {
+      markAroundShip(state, ship);
+    }
+  }
+}
+
+// adds receiveAttack method to an object
+const addReceiveAttack = (state) => ({
+  receiveAttack: (attackLocation) => receiveAttack(state, attackLocation),
+});
+
+// method for getting attacks on a ship
+const addGetAttacks = (state) => ({
+  getAttacks() {
+    const { missedShots } = state;
+    const { hitShots } = state;
+    const { unavailableShots } = state;
+    return { missedShots, hitShots, unavailableShots };
+  },
+});
+
 // game board factory function
 function GameBoard(gameBoardLen) {
   // positions in game board
@@ -138,6 +208,10 @@ function GameBoard(gameBoardLen) {
     positions: {},
     ships: [],
     gameBoardLen,
+    // used after the ship placement
+    missedShots: [],
+    hitShots: [],
+    unavailableShots: [],
   };
 
   // populating the game board
@@ -154,6 +228,8 @@ function GameBoard(gameBoardLen) {
     ...addRemoveShip(state),
     ...addChangeShipAxis(state),
     ...addCheckPlacement(state),
+    ...addReceiveAttack(state),
+    ...addGetAttacks(state),
   };
 }
 

@@ -186,4 +186,36 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
       expect(gameBoard.checkPlacement([8, 3], 3, "y")).toBeFalsy();
     });
   });
+
+  describe("game board receiveAttack functionality", () => {
+    let ship;
+    beforeAll(() => {
+      ship = gameBoard.createShip([0, 0], 4, "x");
+      gameBoard.receiveAttack([0, 0]);
+      gameBoard.receiveAttack([0, 1]);
+      gameBoard.receiveAttack([0, 2]);
+      gameBoard.receiveAttack([0, 3]);
+      gameBoard.receiveAttack([1, 1]);
+    });
+    afterAll(() => {
+      gameBoard = GameBoard(gameBoardLen);
+    });
+    test("game board receive hit shots corectly", () => {
+      expect(gameBoard.getAttacks().hitShots).toContain(String([0, 0]));
+      expect(gameBoard.getAttacks().hitShots).toContain(String([0, 3]));
+      expect(gameBoard.getAttacks().hitShots).not.toContain(String([1, 1]));
+    });
+    test("game board receive miss shots corectly", () => {
+      expect(gameBoard.getAttacks().missedShots).not.toContain(String([0, 0]));
+      expect(gameBoard.getAttacks().missedShots).toContain(String([1, 1]));
+    });
+    test("game board sink the ship correctly corectly", () => {
+      expect(ship.isSunk()).not.toBeFalsy();
+    });
+    // toDo
+    test("game board marks around the sunk ship correctly", () => {
+      expect(gameBoard.getAttacks().unavailableShots).toContain(String([0, 4]));
+      expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 9]));
+    });
+  });
 });
