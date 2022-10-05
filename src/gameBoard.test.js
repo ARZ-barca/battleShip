@@ -186,8 +186,10 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
       expect(gameBoard.checkPlacement([5, 6], 2, "x")).toBeFalsy();
     });
     test("can't place a ship out of game board", () => {
-      expect(gameBoard.checkPlacement([0, 9], 2, "x")).toBeFalsy();
-      expect(gameBoard.checkPlacement([8, 3], 3, "y")).toBeFalsy();
+      expect(gameBoard.checkPlacement([0, gameBoardLen], 2, "x")).toBeFalsy();
+      expect(
+        gameBoard.checkPlacement([gameBoardLen - 1, 3], 3, "y")
+      ).toBeFalsy();
     });
   });
 

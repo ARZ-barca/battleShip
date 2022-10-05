@@ -1,30 +1,54 @@
 import Ship, { predictShipPositions } from "./ships";
 
-// changes positions in game board to 'ship'
-function changeShipPositions(state, ship) {
-  const shipPositions = Object.keys(ship.getPositions());
-  shipPositions.forEach((p) => {
-    state.positions[p] = "ship";
+// change the given positions in the game boards
+function changeGameBoardPositions(state, positions, value) {
+  positions.forEach((p) => {
+    state.positions[String(p)] = value;
   });
 }
 
-// changes arround the ship positions to 'unavailable'
-function changeAroundShipPositions(state, ship) {
-  const shipPositions = Object.keys(ship.getPositions());
+// get the ship positions as a list
+function getShipPositions(ship) {
+  return Object.keys(ship.getPositions());
+}
+
+// changes positions in game board to 'ship'
+function changeShipPositions(state, ship) {
+  const shipPositions = getShipPositions(ship);
+  changeGameBoardPositions(state, shipPositions, "ship");
+}
+
+// get positions arround ship
+function getPositionsAroundShip(state, ship) {
+  const shipPositions = getShipPositions(ship);
+  const aroundPositions = [];
   shipPositions.forEach((p) => {
     const pAsList = p.split(",");
     for (let i = -1; i < 2; i += 1) {
       for (let j = -1; j < 2; j += 1) {
+        const newPos = String([+pAsList[0] + i, +pAsList[1] + j]);
         if (
-          state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] ===
-          "empty"
+          (state.positions[newPos] === "empty" ||
+            state.positions[newPos] === "unavailable") &&
+          !aroundPositions.includes(newPos)
         ) {
-          state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] =
-            "unavailable";
+          aroundPositions.push(newPos);
         }
       }
     }
   });
+  return aroundPositions;
+}
+
+// changes arround the ship positions to 'unavailable'
+function changeAroundShipPositions(state, ship) {
+  const aroundPositions = getPositionsAroundShip(state, ship);
+  changeGameBoardPositions(state, aroundPositions, "unavailable");
+}
+
+// add ship to the gameboard ships
+function addShipToGameBoardShips(state, ship) {
+  state.ships.push(ship);
 }
 
 // method for placing ships in gameboard (returns the ship)
@@ -32,7 +56,7 @@ function createShip(state, createPos, len, axis) {
   const ship = Ship(createPos, len, axis);
   changeShipPositions(state, ship);
   changeAroundShipPositions(state, ship);
-  state.ships.push(ship);
+  addShipToGameBoardShips(state, ship);
   return ship;
 }
 
@@ -43,32 +67,18 @@ const addCreateShip = (state) => ({
 
 // makes the ship positions 'empty'
 function emptyShipPositions(state, ship) {
-  const shipPositions = Object.keys(ship.getPositions());
-  shipPositions.forEach((p) => {
-    state.positions[p] = "empty";
-  });
+  const shipPositions = getShipPositions(ship);
+  changeGameBoardPositions(state, shipPositions, "empty");
 }
 
 // makes around the ship's position empty
 function emptyAroundShipPosition(state, ship) {
-  const shipPositions = Object.keys(ship.getPositions());
-  shipPositions.forEach((p) => {
-    const pAsList = p.split(",");
-    for (let i = -1; i < 2; i += 1) {
-      for (let j = -1; j < 2; j += 1) {
-        if (
-          state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] ===
-          "unavailable"
-        ) {
-          state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] = "empty";
-        }
-      }
-    }
-  });
+  const aroundPositions = getPositionsAroundShip(state, ship);
+  changeGameBoardPositions(state, aroundPositions, "empty");
 }
 
 // removes the ship from gameBoard ships
-function removeShipFromGameBoardShip(state, ship) {
+function removeShipFromGameBoardShips(state, ship) {
   const shipIndex = state.ships.indexOf(ship);
   state.ships.splice(shipIndex, 1);
 }
@@ -77,7 +87,7 @@ function removeShipFromGameBoardShip(state, ship) {
 function removeShip(state, ship) {
   emptyShipPositions(state, ship);
   emptyAroundShipPosition(state, ship);
-  removeShipFromGameBoardShip(state, ship);
+  removeShipFromGameBoardShips(state, ship);
 }
 
 // adds removeship method to an object
@@ -143,26 +153,10 @@ function getHitShip(ships, attackPosition) {
 
 // mark around a ship in game board as unavailableShot for hit
 function markAroundShip(state, ship) {
-  const shipPositions = Object.keys(ship.getPositions());
-  shipPositions.forEach((p) => {
-    const pAsList = p.split(",");
-    for (let i = -1; i < 2; i += 1) {
-      for (let j = -1; j < 2; j += 1) {
-        if (
-          !state.missedShots.includes(
-            String([+pAsList[0] + i, +pAsList[1] + j])
-          ) &&
-          state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] ===
-            "unavailable" &&
-          !state.unavailableShots.includes(
-            String([+pAsList[0] + i, +pAsList[1] + j])
-          )
-        ) {
-          state.unavailableShots.push(
-            String([+pAsList[0] + i, +pAsList[1] + j])
-          );
-        }
-      }
+  const aroundPositions = getPositionsAroundShip(state, ship);
+  aroundPositions.forEach((p) => {
+    if (!state.missedShots.includes(p) && !state.unavailableShots.includes(p)) {
+      state.unavailableShots.push(p);
     }
   });
 }
