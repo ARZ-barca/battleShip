@@ -1,8 +1,8 @@
 import Ship, { predictShipPositions } from "./ships";
 
-// changes positions in game board
+// changes positions in game board to 'ship'
 function changeShipPositions(state, ship) {
-  const shipPositions = Object.keys(ship.getLocation());
+  const shipPositions = Object.keys(ship.getPositions());
   shipPositions.forEach((p) => {
     state.positions[p] = "ship";
   });
@@ -10,7 +10,7 @@ function changeShipPositions(state, ship) {
 
 // changes arround the ship positions to 'unavailable'
 function changeAroundShipPositions(state, ship) {
-  const shipPositions = Object.keys(ship.getLocation());
+  const shipPositions = Object.keys(ship.getPositions());
   shipPositions.forEach((p) => {
     const pAsList = p.split(",");
     for (let i = -1; i < 2; i += 1) {
@@ -28,8 +28,8 @@ function changeAroundShipPositions(state, ship) {
 }
 
 // method for placing ships in gameboard (returns the ship)
-function createShip(state, createLoc, len, axis) {
-  const ship = Ship(createLoc, len, axis);
+function createShip(state, createPos, len, axis) {
+  const ship = Ship(createPos, len, axis);
   changeShipPositions(state, ship);
   changeAroundShipPositions(state, ship);
   state.ships.push(ship);
@@ -38,12 +38,12 @@ function createShip(state, createLoc, len, axis) {
 
 // adds the createShip method to object
 const addCreateShip = (state) => ({
-  createShip: (createLoc, len, axis) => createShip(state, createLoc, len, axis),
+  createShip: (createPos, len, axis) => createShip(state, createPos, len, axis),
 });
 
 // makes the ship positions 'empty'
 function emptyShipPositions(state, ship) {
-  const shipPositions = Object.keys(ship.getLocation());
+  const shipPositions = Object.keys(ship.getPositions());
   shipPositions.forEach((p) => {
     state.positions[p] = "empty";
   });
@@ -51,7 +51,7 @@ function emptyShipPositions(state, ship) {
 
 // makes around the ship's position empty
 function emptyAroundShipPosition(state, ship) {
-  const shipPositions = Object.keys(ship.getLocation());
+  const shipPositions = Object.keys(ship.getPositions());
   shipPositions.forEach((p) => {
     const pAsList = p.split(",");
     for (let i = -1; i < 2; i += 1) {
@@ -90,9 +90,9 @@ const addRemoveShip = (state) => ({
 // method for repositioning the ship
 function changeShipAxis(state, ship, newAxis) {
   removeShip(state, ship);
-  const shipCreateLoc = ship.getCreateLoc();
+  const shipCreatePos = ship.getCreatePos();
   const shipLen = ship.getLen();
-  const newShip = createShip(state, shipCreateLoc, shipLen, newAxis);
+  const newShip = createShip(state, shipCreatePos, shipLen, newAxis);
   return newShip;
 }
 
@@ -102,8 +102,8 @@ const addChangeShipAxis = (state) => ({
 });
 
 // method that checks for placement validity
-function checkPlacement(state, createLoc, len, axis) {
-  const predictedPositions = predictShipPositions(createLoc, len, axis);
+function checkPlacement(state, createPos, len, axis) {
+  const predictedPositions = predictShipPositions(createPos, len, axis);
   for (const p of predictedPositions) {
     if (state.positions[String(p)] !== "empty") {
       return false;
@@ -114,8 +114,8 @@ function checkPlacement(state, createLoc, len, axis) {
 
 // adds checkPlacement method to an object
 const addCheckPlacement = (state) => ({
-  checkPlacement: (createLoc, len, axis) =>
-    checkPlacement(state, createLoc, len, axis),
+  checkPlacement: (createPos, len, axis) =>
+    checkPlacement(state, createPos, len, axis),
 });
 
 // method for getting the positions of game board
@@ -133,18 +133,17 @@ const addGetShips = (state) => ({
 });
 
 // returns the ship that got hit
-function getHitShip(ships, attackLocation) {
+function getHitShip(ships, attackPosition) {
   for (const ship of ships) {
-    if (Object.keys(ship.getLocation()).includes(String(attackLocation))) {
+    if (Object.keys(ship.getPositions()).includes(String(attackPosition))) {
       return ship;
     }
   }
 }
 
-// toDo
 // mark around a ship in game board as unavailableShot for hit
 function markAroundShip(state, ship) {
-  const shipPositions = Object.keys(ship.getLocation());
+  const shipPositions = Object.keys(ship.getPositions());
   shipPositions.forEach((p) => {
     const pAsList = p.split(",");
     for (let i = -1; i < 2; i += 1) {
@@ -154,7 +153,10 @@ function markAroundShip(state, ship) {
             String([+pAsList[0] + i, +pAsList[1] + j])
           ) &&
           state.positions[String([+pAsList[0] + i, +pAsList[1] + j])] ===
-            "unavailable"
+            "unavailable" &&
+          !state.unavailableShots.includes(
+            String([+pAsList[0] + i, +pAsList[1] + j])
+          )
         ) {
           state.unavailableShots.push(
             String([+pAsList[0] + i, +pAsList[1] + j])
@@ -166,20 +168,20 @@ function markAroundShip(state, ship) {
 }
 
 // checks an attack for hit or miss
-function checkAttack(state, attackLocation) {
-  if (state.positions[String(attackLocation)] === "ship") {
-    state.hitShots.push(String(attackLocation));
+function checkAttack(state, attackPosition) {
+  if (state.positions[String(attackPosition)] === "ship") {
+    state.hitShots.push(String(attackPosition));
     return true;
   }
-  state.missedShots.push(String(attackLocation));
+  state.missedShots.push(String(attackPosition));
   return false;
 }
 
 // method for receieveing an attack
-function receiveAttack(state, attackLocation) {
-  if (checkAttack(state, attackLocation)) {
-    const ship = getHitShip(state.ships, attackLocation);
-    ship.hit(attackLocation);
+function receiveAttack(state, attackPosition) {
+  if (checkAttack(state, attackPosition)) {
+    const ship = getHitShip(state.ships, attackPosition);
+    ship.hit(attackPosition);
     if (ship.isSunk()) {
       markAroundShip(state, ship);
     }
@@ -188,7 +190,7 @@ function receiveAttack(state, attackLocation) {
 
 // adds receiveAttack method to an object
 const addReceiveAttack = (state) => ({
-  receiveAttack: (attackLocation) => receiveAttack(state, attackLocation),
+  receiveAttack: (attackPosition) => receiveAttack(state, attackPosition),
 });
 
 // method for getting attacks on a ship

@@ -16,6 +16,10 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
     );
   });
 
+  test("gameBoard storse positions in correct format", () => {
+    expect(Object.keys(gameBoard.getPositions())[0]).toBe("0,0");
+  });
+
   describe("ship creation tests", () => {
     let ship1;
     let ship2;
@@ -99,7 +103,7 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
     afterAll(() => {
       gameBoard = GameBoard(gameBoardLen);
     });
-    test("ship's origial create location is still 'ship'", () => {
+    test("ship's origial create position is still 'ship'", () => {
       expect(gameBoard.getPositions()[String([0, 0])]).not.toBe("empty");
     });
     test("ship's origial place is 'empty'", () => {
@@ -136,7 +140,7 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
     afterAll(() => {
       gameBoard = GameBoard(gameBoardLen);
     });
-    test("ship's origial create location is still 'ship'", () => {
+    test("ship's origial create position is still 'ship'", () => {
       expect(gameBoard.getPositions()[String([0, 0])]).not.toBe("empty");
     });
     test("ship's origial place is 'empty'", () => {
@@ -194,8 +198,8 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
       gameBoard.receiveAttack([0, 0]);
       gameBoard.receiveAttack([0, 1]);
       gameBoard.receiveAttack([0, 2]);
-      gameBoard.receiveAttack([0, 3]);
       gameBoard.receiveAttack([1, 1]);
+      gameBoard.receiveAttack([0, 3]);
     });
     afterAll(() => {
       gameBoard = GameBoard(gameBoardLen);
@@ -206,16 +210,16 @@ describe("GameBoard factory function with gameBoard length of 10", () => {
       expect(gameBoard.getAttacks().hitShots).not.toContain(String([1, 1]));
     });
     test("game board receive miss shots corectly", () => {
-      expect(gameBoard.getAttacks().missedShots).not.toContain(String([0, 0]));
+      expect(gameBoard.getAttacks().missedShots.length).toBe(1);
       expect(gameBoard.getAttacks().missedShots).toContain(String([1, 1]));
     });
     test("game board sink the ship correctly corectly", () => {
       expect(ship.isSunk()).not.toBeFalsy();
     });
-    // toDo
     test("game board marks around the sunk ship correctly", () => {
       expect(gameBoard.getAttacks().unavailableShots).toContain(String([0, 4]));
-      expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 9]));
+      expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 0]));
+      expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 3]));
     });
   });
 });
