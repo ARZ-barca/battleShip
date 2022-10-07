@@ -1,0 +1,12 @@
+:root {
+  --board-len: 10;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(var(--board-len), 1fr);
+  grid-template-rows: repeat(var(--board-len), 1fr);
+  width: min(400px, 100vw);
+  height: min(400px, 100vw);
+  border: 2px solid black;
+}
