@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import Ship from "./ships";
 
 describe("Ship factory function for a ship with create pocation of [0, 0] and length of 4 and on x axis", () => {

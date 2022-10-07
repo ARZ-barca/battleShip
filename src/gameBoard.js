@@ -197,6 +197,22 @@ const addGetAttacks = (state) => ({
   },
 });
 
+// method for checking if the game is over
+function isGameOver(state) {
+  let gameOver = true;
+  state.ships.forEach((ship) => {
+    if (!ship.isSunk()) {
+      gameOver = false;
+    }
+  });
+  return gameOver;
+}
+
+// add isGameOver to an object
+const addisGameOver = (state) => ({
+  isGameOver: () => isGameOver(state),
+});
+
 // game board factory function
 function GameBoard(gameBoardLen) {
   // positions in game board
@@ -226,6 +242,7 @@ function GameBoard(gameBoardLen) {
     ...addCheckPlacement(state),
     ...addReceiveAttack(state),
     ...addGetAttacks(state),
+    ...addisGameOver(state),
   };
 }
 
