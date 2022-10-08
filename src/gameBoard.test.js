@@ -191,6 +191,23 @@ describe("check possibility of placing ships in different positions", () => {
   });
 });
 
+describe("game board check attack correctly", () => {
+  beforeAll(() => {
+    gameBoard.createShip([0, 0], 4, "x");
+  });
+  afterAll(() => {
+    gameBoard = GameBoard(gameBoardLen);
+  });
+
+  test("gameboard recognizes an attack will miss", () => {
+    expect(gameBoard.checkAttack([1, 0])).toBeFalsy();
+  });
+
+  test("gameboard recognizes an attack will miss", () => {
+    expect(gameBoard.checkAttack([0, 0])).toBeTruthy();
+  });
+});
+
 describe("game board receiveAttack functionality", () => {
   let ship;
   beforeAll(() => {

@@ -1,1 +1,3 @@
-console.log(2);
+import main from "./board-dom";
+
+main();

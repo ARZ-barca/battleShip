@@ -27,14 +27,15 @@ const addGetAvailableShots = (state) => ({
 });
 
 // attack method
-function attack(state, position) {
+function attack(state, oponentBoard, position) {
   const positionIndex = state.availableShots.indexOf(String(position));
+  oponentBoard.receiveAttack(position);
   state.availableShots.splice(positionIndex, 1);
 }
 
 // add attack method to an object
 const addAttack = (state) => ({
-  attack: (position) => attack(state, position),
+  attack: (oponentBoard, position) => attack(state, oponentBoard, position),
 });
 
 // method for ai to choose an attack position

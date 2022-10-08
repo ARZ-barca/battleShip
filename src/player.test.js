@@ -25,7 +25,7 @@ test("players initialize their shots correctly", () => {
 
 describe("players attack funtionality", () => {
   beforeAll(() => {
-    player1.attack([0, 0]);
+    player1.attack(player2.getGameBoard(), [0, 0]);
   });
   afterAll(() => {
     player1 = Player();
@@ -35,10 +35,15 @@ describe("players attack funtionality", () => {
     expect(player1.getAvailableShots().length).toBe(gameBoardLen ** 2 - 1);
     expect(player1.getAvailableShots()).not.toContain("0,0");
   });
+  test("oponent recieved the attack correctly", () => {
+    expect(player2.getGameBoard().getAttacks().missedShots).toContain(
+      String([0, 0])
+    );
+  });
   describe("ai choosing attack position works correctly", () => {
     beforeAll(() => {
       for (let i = 0; i < gameBoardLen ** 2 - 3; i++) {
-        player2.attack(player2.getAttackPosition());
+        player2.attack(player1.getGameBoard(), player2.getAttackPosition());
       }
     });
     test("ai player chooses one of available shots", () => {
