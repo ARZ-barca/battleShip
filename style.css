@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --board-len: 10;
 }
@@ -9,4 +13,12 @@
   width: min(400px, 100vw);
   height: min(400px, 100vw);
   border: 2px solid black;
+}
+
+.position {
+  border: 1px solid black;
+}
+
+.ship {
+  background-color: green;
 }
