@@ -30,6 +30,8 @@ function popHboard(boardDom, len) {
   }
 }
 
+// event listener for attacking ai board so we can remove it later
+let attackEventListener;
 // board dom can receive attack
 function receiveAttackDom(board, boardDom, attacker, position, positionDom) {
   attacker.attack(board, position);
@@ -42,6 +44,7 @@ function receiveAttackDom(board, boardDom, attacker, position, positionDom) {
         const selector = `.p-${String(p).replace(",", "-")}`;
         const dom = boardDom.querySelector(selector);
         dom.textContent = "O";
+        dom.classList.remove("selectable");
       });
     }
   } else {
@@ -49,31 +52,81 @@ function receiveAttackDom(board, boardDom, attacker, position, positionDom) {
   }
 }
 
+function aiAttacks(humanBoard, humanBoardDom, aiPlayer) {
+  const attackPosition = aiPlayer.getAttackPosition();
+  const selector = `.p-${String(attackPosition).replace(",", "-")}`;
+  const positionDom = humanBoardDom.querySelector(selector);
+  receiveAttackDom(
+    humanBoard,
+    humanBoardDom,
+    aiPlayer,
+    attackPosition,
+    positionDom
+  );
+}
+
 // populate Ai board
-function popAiBoard(board, attacker, boardDom, len) {
+function popAiBoard(
+  aiPlayer,
+  aiBoard,
+  aiBoardDom,
+  humanPlayer,
+  humanBoard,
+  humanBoardDom,
+  len
+) {
   for (let i = 0; i < len; i++) {
     for (let j = 0; j < len; j++) {
       const positionDom = document.createElement("div");
-      positionDom.classList.add("position", `p-${i}-${j}`);
-      boardDom.appendChild(positionDom);
-      positionDom.addEventListener("click", () => {
-        receiveAttackDom(board, boardDom, attacker, [i, j], positionDom);
+      positionDom.classList.add("position", `p-${i}-${j}`, "selectable");
+      aiBoardDom.appendChild(positionDom);
+      attackEventListener = () => {
+        //  to check if shot is available
+        if (aiBoard.getAttacks().unavailableShots.includes(String([i, j]))) {
+          return;
+        }
+        receiveAttackDom(aiBoard, aiBoardDom, humanPlayer, [i, j], positionDom);
+        if (aiBoard.isGameOver()) {
+          console.log("player won");
+          return;
+        }
+        aiAttacks(humanBoard, humanBoardDom, aiPlayer);
+        if (humanBoard.isGameOver()) {
+          console.log("ai won");
+          return;
+        }
+        positionDom.classList.remove("selectable");
+        // check if game is over
+      };
+      positionDom.addEventListener("click", attackEventListener, {
+        once: true,
+        capture: false,
       });
     }
   }
 }
 
-// human and ai players
+// human and ai players and boards
 const hPlayer = Player();
 const aiPlayer = AiPlayer();
+const humanBoardDom = document.querySelector(".game-board.human");
+const aiBoardDom = document.querySelector(".game-board.ai");
+const aiBoard = aiPlayer.getGameBoard();
+const humanBoard = hPlayer.getGameBoard();
 
-// main game loop
+// main game loop (popAiBoard is where loops happens)
 function main() {
-  const humanBoardDom = document.querySelector(".game-board.human");
-  const aiBoardDom = document.querySelector(".game-board.ai");
   popHboard(humanBoardDom, len);
-  popAiBoard(aiPlayer.getGameBoard(), hPlayer, aiBoardDom, len);
-  placeShip(hPlayer, humanBoardDom, [1, 1], 4, "x");
+  popAiBoard(
+    aiPlayer,
+    aiBoard,
+    aiBoardDom,
+    hPlayer,
+    humanBoard,
+    humanBoardDom,
+    len
+  );
+  placeShip(hPlayer, humanBoardDom, [1, 1], 1, "x");
   placeShip(aiPlayer, aiBoardDom, [1, 1], 2, "x");
   placeShip(aiPlayer, aiBoardDom, [5, 5], 4, "y");
 }
