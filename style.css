@@ -26,3 +26,7 @@
 .selectable {
   cursor: pointer;
 }
+
+.game-over {
+  pointer-events: none;
+}
