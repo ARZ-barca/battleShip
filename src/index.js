@@ -1,3 +1,3 @@
-import main from "./board-dom";
+import main from "./dom";
 
 main();

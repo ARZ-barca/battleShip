@@ -2,14 +2,14 @@ import GameBoard from "./gameBoard";
 
 const gameBoardLen = 10;
 
-// initialize the available shots
-function initializeShots(state) {
-  for (let i = 0; i < gameBoardLen; i++) {
-    for (let j = 0; j < gameBoardLen; j++) {
-      state.availableShots.push(String([i, j]));
-    }
-  }
-}
+// // initialize the available shots
+// function initializeShots(state) {
+//   for (let i = 0; i < gameBoardLen; i++) {
+//     for (let j = 0; j < gameBoardLen; j++) {
+//       state.availableShots.push(String([i, j]));
+//     }
+//   }
+// }
 
 // add getGameBoard method to an object
 const addGetGameBoard = (state) => ({
@@ -21,50 +21,97 @@ const addGetGameBoardLen = (state) => ({
   getGameBoardLen: () => state.gameBoardLen,
 });
 
-// add addGetAvailableShots method to an object
-const addGetAvailableShots = (state) => ({
-  getAvailableShots: () => state.availableShots,
-});
-
-// attack method
-function attack(state, oponentBoard, position) {
-  const positionIndex = state.availableShots.indexOf(String(position));
-  oponentBoard.receiveAttack(position);
-  state.availableShots.splice(positionIndex, 1);
+// method for creating the ship
+function createShip(state, createPos, len, axis) {
+  return state.gameBoard.createShip(createPos, len, axis);
 }
 
-// add attack method to an object
-const addAttack = (state) => ({
-  attack: (oponentBoard, position) => attack(state, oponentBoard, position),
+// add createShip to the player
+const addCreateShip = (state) => ({
+  createShip: (createPos, len, axis) => createShip(state, createPos, len, axis),
 });
 
-// method for ai to choose an attack position
-function getAttackPosition(state) {
-  const len = state.availableShots.length;
-  const i = Math.floor(Math.random() * len);
-  return state.availableShots[i];
+// method for checking the ship placement validity
+function checkPlacement(state, createPos, len, axis) {
+  return state.gameBoard.checkPlacement(createPos, len, axis);
 }
 
-// add getAttackPosition method to an object
-const addGetAttackPosition = (state) => ({
-  getAttackPosition: () => getAttackPosition(state),
+// add createShip to the player
+const addCheckPlacement = (state) => ({
+  checkPlacement: (createPos, len, axis) =>
+    checkPlacement(state, createPos, len, axis),
 });
+
+// method for removing a ship
+function removeShip(state, ship) {
+  state.gameBoard.removeShip(ship);
+}
+
+// add removeShip to the player
+const addRemoveShip = (state) => ({
+  removeShip: (ship) => {
+    removeShip(state, ship);
+  },
+});
+
+// method for removing a ship
+function changeShipAxis(state, ship, newAxis) {
+  return state.gameBoard.changeShipAxis(ship, newAxis);
+}
+
+// add removeShip to the player
+const addChangeShipAxis = (state) => ({
+  changeShipAxis: (ship, newAxis) => changeShipAxis(state, ship, newAxis),
+});
+
+// // add addGetAvailableShots method to an object
+// const addGetAvailableShots = (state) => ({
+//   getAvailableShots: () => state.availableShots,
+// });
+
+// // attack method
+// function attack(state, oponentBoard, position) {
+//   const positionIndex = state.availableShots.indexOf(String(position));
+//   oponentBoard.receiveAttack(position);
+//   state.availableShots.splice(positionIndex, 1);
+// }
+
+// // add attack method to an object
+// const addAttack = (state) => ({
+//   attack: (oponentBoard, position) => attack(state, oponentBoard, position),
+// });
+
+// // method for ai to choose an attack position
+// function getAttackPosition(state) {
+//   const len = state.availableShots.length;
+//   const i = Math.floor(Math.random() * len);
+//   return state.availableShots[i];
+// }
+
+// // add getAttackPosition method to an object
+// const addGetAttackPosition = (state) => ({
+//   getAttackPosition: () => getAttackPosition(state),
+// });
 
 // factory function for human Player
 function Player() {
   const state = {
     gameBoard: GameBoard(gameBoardLen),
     gameBoardLen,
-    availableShots: [],
+    // availableShots: [],
   };
 
-  initializeShots(state);
+  // initializeShots(state);
 
   return {
     ...addGetGameBoard(state),
     ...addGetGameBoardLen(state),
-    ...addGetAvailableShots(state),
-    ...addAttack(state),
+    ...addCreateShip(state),
+    ...addCheckPlacement(state),
+    ...addRemoveShip(state),
+    ...addChangeShipAxis(state),
+    // ...addGetAvailableShots(state),
+    // ...addAttack(state),
   };
 }
 
@@ -73,17 +120,21 @@ function AiPlayer() {
   const state = {
     gameBoard: GameBoard(gameBoardLen),
     gameBoardLen,
-    availableShots: [],
+    // availableShots: [],
   };
 
-  initializeShots(state);
+  // initializeShots(state);
 
   return {
     ...addGetGameBoard(state),
     ...addGetGameBoardLen(state),
-    ...addGetAvailableShots(state),
-    ...addAttack(state),
-    ...addGetAttackPosition(state),
+    ...addCreateShip(state),
+    ...addCheckPlacement(state),
+    ...addRemoveShip(state),
+    ...addChangeShipAxis(state),
+    // ...addGetAvailableShots(state),
+    // ...addAttack(state),
+    // ...addGetAttackPosition(state),
   };
 }
 

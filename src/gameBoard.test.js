@@ -165,6 +165,12 @@ describe("changing a ship axis for a ship with original axis of 'y'", () => {
     expect(gameBoard.getShips().length).toBe(1);
     expect(gameBoard.getShips()).toContain(newShip);
   });
+
+  test("gameBoard has correct number of positions after ship creation", () => {
+    expect(Object.keys(gameBoard.getPositions()).length).toBe(
+      gameBoardLen ** 2
+    );
+  });
 });
 
 describe("check possibility of placing ships in different positions", () => {
@@ -191,69 +197,93 @@ describe("check possibility of placing ships in different positions", () => {
   });
 });
 
-describe("game board check attack correctly", () => {
+describe("removing ships tests", () => {
+  let ship1;
   beforeAll(() => {
-    gameBoard.createShip([0, 0], 4, "x");
+    ship1 = gameBoard.createShip([0, 0], 4, "x");
+    gameBoard.removeShip(ship1);
   });
   afterAll(() => {
     gameBoard = GameBoard(gameBoardLen);
   });
 
-  test("gameboard recognizes an attack will miss", () => {
-    expect(gameBoard.checkAttack([1, 0])).toBeFalsy();
+  test("ship's origial place is 'empty'", () => {
+    expect(gameBoard.getPositions()[String([3, 0])]).toBe("empty");
   });
 
-  test("gameboard recognizes an attack will miss", () => {
-    expect(gameBoard.checkAttack([0, 0])).toBeTruthy();
+  test("around ship's origial place is 'empty'", () => {
+    expect(gameBoard.getPositions()[String([4, 1])]).toBe("empty");
+    expect(gameBoard.getPositions()[String([4, 0])]).toBe("empty");
+  });
+
+  test("gameBoard doesn't contain the ship in its ships", () => {
+    expect(gameBoard.getShips()).not.toContain(ship1);
   });
 });
 
-describe("game board receiveAttack functionality", () => {
-  let ship;
-  beforeAll(() => {
-    ship = gameBoard.createShip([0, 0], 4, "x");
-    gameBoard.receiveAttack([0, 0]);
-    gameBoard.receiveAttack([0, 1]);
-    gameBoard.receiveAttack([0, 2]);
-    gameBoard.receiveAttack([1, 1]);
-    gameBoard.receiveAttack([0, 3]);
-  });
-  afterAll(() => {
-    gameBoard = GameBoard(gameBoardLen);
-  });
-  test("game board receive hit shots corectly", () => {
-    expect(gameBoard.getAttacks().hitShots).toContain(String([0, 0]));
-    expect(gameBoard.getAttacks().hitShots).toContain(String([0, 3]));
-    expect(gameBoard.getAttacks().hitShots).not.toContain(String([1, 1]));
-  });
-  test("game board receive miss shots corectly", () => {
-    expect(gameBoard.getAttacks().missedShots.length).toBe(1);
-    expect(gameBoard.getAttacks().missedShots).toContain(String([1, 1]));
-  });
-  test("game board sink the ship correctly corectly", () => {
-    expect(ship.isSunk()).toBeTruthy();
-  });
-  test("game board marks around the sunk ship correctly", () => {
-    expect(gameBoard.getAttacks().unavailableShots).toContain(String([0, 4]));
-    expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 0]));
-    expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 3]));
-  });
-});
+// describe("game board check attack correctly", () => {
+//   beforeAll(() => {
+//     gameBoard.createShip([0, 0], 4, "x");
+//   });
+//   afterAll(() => {
+//     gameBoard = GameBoard(gameBoardLen);
+//   });
 
-describe("game board can tell if all of the ships have been sunk", () => {
-  beforeAll(() => {
-    gameBoard.createShip([0, 0], 1, "x");
-    gameBoard.createShip([2, 3], 2, "y");
-    gameBoard.receiveAttack([0, 0]);
-    gameBoard.receiveAttack([2, 3]);
-  });
-  afterAll(() => {
-    gameBoard = GameBoard(gameBoardLen);
-  });
+//   test("gameboard recognizes an attack will miss", () => {
+//     expect(gameBoard.checkAttack([1, 0])).toBeFalsy();
+//   });
 
-  test("isGameOver method workds correctly", () => {
-    expect(gameBoard.isGameOver()).toBeFalsy();
-    gameBoard.receiveAttack([3, 3]);
-    expect(gameBoard.isGameOver()).toBeTruthy();
-  });
-});
+//   test("gameboard recognizes an attack will miss", () => {
+//     expect(gameBoard.checkAttack([0, 0])).toBeTruthy();
+//   });
+// });
+
+// describe("game board receiveAttack functionality", () => {
+//   let ship;
+//   beforeAll(() => {
+//     ship = gameBoard.createShip([0, 0], 4, "x");
+//     gameBoard.receiveAttack([0, 0]);
+//     gameBoard.receiveAttack([0, 1]);
+//     gameBoard.receiveAttack([0, 2]);
+//     gameBoard.receiveAttack([1, 1]);
+//     gameBoard.receiveAttack([0, 3]);
+//   });
+//   afterAll(() => {
+//     gameBoard = GameBoard(gameBoardLen);
+//   });
+//   test("game board receive hit shots corectly", () => {
+//     expect(gameBoard.getAttacks().hitShots).toContain(String([0, 0]));
+//     expect(gameBoard.getAttacks().hitShots).toContain(String([0, 3]));
+//     expect(gameBoard.getAttacks().hitShots).not.toContain(String([1, 1]));
+//   });
+//   test("game board receive miss shots corectly", () => {
+//     expect(gameBoard.getAttacks().missedShots.length).toBe(1);
+//     expect(gameBoard.getAttacks().missedShots).toContain(String([1, 1]));
+//   });
+//   test("game board sink the ship correctly corectly", () => {
+//     expect(ship.isSunk()).toBeTruthy();
+//   });
+//   test("game board marks around the sunk ship correctly", () => {
+//     expect(gameBoard.getAttacks().unavailableShots).toContain(String([0, 4]));
+//     expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 0]));
+//     expect(gameBoard.getAttacks().unavailableShots).toContain(String([1, 3]));
+//   });
+// });
+
+// describe("game board can tell if all of the ships have been sunk", () => {
+//   beforeAll(() => {
+//     gameBoard.createShip([0, 0], 1, "x");
+//     gameBoard.createShip([2, 3], 2, "y");
+//     gameBoard.receiveAttack([0, 0]);
+//     gameBoard.receiveAttack([2, 3]);
+//   });
+//   afterAll(() => {
+//     gameBoard = GameBoard(gameBoardLen);
+//   });
+
+//   test("isGameOver method workds correctly", () => {
+//     expect(gameBoard.isGameOver()).toBeFalsy();
+//     gameBoard.receiveAttack([3, 3]);
+//     expect(gameBoard.isGameOver()).toBeTruthy();
+//   });
+// });

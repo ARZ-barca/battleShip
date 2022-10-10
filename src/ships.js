@@ -1,18 +1,18 @@
-// method that marks a position as hit
-function addHit(state) {
-  return {
-    hit(hitPosition) {
-      state.positions[String(hitPosition)] = "hit";
-    },
-  };
-}
+// // method that marks a position as hit
+// function addHit(state) {
+//   return {
+//     hit(hitPosition) {
+//       state.positions[String(hitPosition)] = "hit";
+//     },
+//   };
+// }
 
-// check if ship is sunk
-const addIsSunk = (state) => ({
-  isSunk() {
-    return Object.values(state.positions).every((value) => value === "hit");
-  },
-});
+// // check if ship is sunk
+// const addIsSunk = (state) => ({
+//   isSunk() {
+//     return Object.values(state.positions).every((value) => value === "hit");
+//   },
+// });
 
 // method for getting positions of ship
 const addGetPositions = (state) => ({
@@ -27,9 +27,21 @@ const addGetLen = (state) => ({
   },
 });
 
+const addGetAxis = (state) => ({
+  getAxis() {
+    return state.axis;
+  },
+});
+
 const addGetCreatePos = (state) => ({
   getCreatePos() {
     return state.createPos;
+  },
+});
+
+const addGetLastPos = (state) => ({
+  getLastPos() {
+    return state.lastPosition;
   },
 });
 
@@ -53,19 +65,26 @@ function Ship(createPos, len, axis) {
   const state = {
     positions: {},
     createPos,
+    axis,
     len,
   };
   // populating the positions of the ship
-  const predictedPositionss = predictShipPositions(createPos, len, axis);
-  for (const p of predictedPositionss) {
+  const predictedPositions = predictShipPositions(createPos, len, axis);
+  for (const p of predictedPositions) {
     state.positions[String(p)] = "good";
   }
+
+  // set endPostion for ship
+  [state.lastPosition] = predictedPositions.slice(-1);
+
   return {
     ...addGetPositions(state),
-    ...addIsSunk(state),
-    ...addHit(state),
+    // ...addIsSunk(state),
+    // ...addHit(state),
     ...addGetLen(state),
     ...addGetCreatePos(state),
+    ...addGetLastPos(state),
+    ...addGetAxis(state),
   };
 }
 
