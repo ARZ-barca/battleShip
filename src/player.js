@@ -1,4 +1,5 @@
 import GameBoard from "./gameBoard";
+import Ship from "./ships";
 
 const gameBoardLen = 10;
 
@@ -55,13 +56,52 @@ const addRemoveShip = (state) => ({
 });
 
 // method for removing a ship
-function changeShipAxis(state, ship, newAxis) {
-  return state.gameBoard.changeShipAxis(ship, newAxis);
+function changeShipAxis(state, ship) {
+  return state.gameBoard.changeShipAxis(ship);
 }
 
 // add removeShip to the player
 const addChangeShipAxis = (state) => ({
-  changeShipAxis: (ship, newAxis) => changeShipAxis(state, ship, newAxis),
+  changeShipAxis: (ship) => changeShipAxis(state, ship),
+});
+
+// returns a random axis : 'x' or 'y'
+function getRandomAxis() {
+  return Math.floor(Math.random() * 100) % 2 === 0 ? "x" : "y";
+}
+
+// returns a random position
+function getRandomPosition(allPositions) {
+  const randomPos =
+    allPositions[Math.floor(allPositions.length * Math.random())];
+  return randomPos;
+}
+
+// method returns a Ship with random create location and axis  and given length
+function getRandomShip(state, len) {
+  const allPositions = [];
+  for (let i = 0; i < gameBoardLen; i++) {
+    for (let j = 0; j < gameBoardLen; j++) {
+      allPositions.push([i, j]);
+    }
+  }
+  while (true) {
+    const randomPos = getRandomPosition(allPositions);
+    const randomAxis = getRandomAxis();
+    if (checkPlacement(state, randomPos, len, randomAxis)) {
+      return Ship(randomPos, len, randomAxis);
+    }
+    const otherAxis = randomAxis === "x" ? "y" : "x";
+    if (checkPlacement(state, randomPos, len, otherAxis)) {
+      return Ship(randomPos, len, otherAxis);
+    }
+    allPositions.splice(allPositions.indexOf(randomPos), 1);
+  }
+}
+
+// add getRandomShip to player
+const addGetRandomShip = (state) => ({
+  getRandomShip: (len) => getRandomShip(state, len),
 });
 
 // // add addGetAvailableShots method to an object
@@ -110,6 +150,7 @@ function Player() {
     ...addCheckPlacement(state),
     ...addRemoveShip(state),
     ...addChangeShipAxis(state),
+    ...addGetRandomShip(state),
     // ...addGetAvailableShots(state),
     // ...addAttack(state),
   };
@@ -132,6 +173,7 @@ function AiPlayer() {
     ...addCheckPlacement(state),
     ...addRemoveShip(state),
     ...addChangeShipAxis(state),
+    ...addGetRandomShip(state),
     // ...addGetAvailableShots(state),
     // ...addAttack(state),
     // ...addGetAttackPosition(state),

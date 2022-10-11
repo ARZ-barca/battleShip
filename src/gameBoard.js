@@ -103,10 +103,11 @@ const addRemoveShip = (state) => ({
 });
 
 // method for repositioning the ship
-function changeShipAxis(state, ship, newAxis) {
+function changeShipAxis(state, ship) {
   removeShip(state, ship);
   const shipCreatePos = ship.getCreatePos();
   const shipLen = ship.getLen();
+  const newAxis = ship.getAxis() === "x" ? "y" : "x";
   const newShip = createShip(state, shipCreatePos, shipLen, newAxis);
   return newShip;
 }

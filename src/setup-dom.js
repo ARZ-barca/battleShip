@@ -1,5 +1,6 @@
 import { gameBoardLen as len } from "./player";
 
+// returns a populated div we use as board for placing ship in
 function populatedSetupBoard() {
   const div = document.createElement("div");
   for (let i = 0; i < len; i++) {
@@ -9,10 +10,41 @@ function populatedSetupBoard() {
       div.appendChild(positionDiv);
     }
   }
+  div.classList.add("game-board");
   return div;
 }
 
-export { populatedSetupBoard };
+// adds event to click on each element of board div
+function addEventToBoard(boardDiv, cb) {
+  [...boardDiv.children].forEach((element) => {
+    element.addEventListener("click", cb);
+  });
+}
+
+// marks a ship on board
+function markShipOnBoard(shipPositions, boardDiv) {
+  shipPositions.forEach((p) => {
+    const selector = `.p-${String(p).replace(",", "-")}`;
+    const dom = boardDiv.querySelector(selector);
+    dom.classList.add("ship");
+  });
+}
+
+// removes a ship from board
+function removeShipFromBoard(shipPositions, boardDiv) {
+  shipPositions.forEach((p) => {
+    const selector = `.p-${String(p).replace(",", "-")}`;
+    const dom = boardDiv.querySelector(selector);
+    dom.classList.remove("ship");
+  });
+}
+
+export {
+  populatedSetupBoard,
+  addEventToBoard,
+  markShipOnBoard,
+  removeShipFromBoard,
+};
 
 // import Player, { AiPlayer, gameBoardLen as len } from "./player";
 // import { predictShipPositions } from "./ships";

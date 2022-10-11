@@ -54,7 +54,7 @@ describe("players can check a ship's placement validity in their game board", ()
   });
 });
 
-describe("players can remove a ship their game board", () => {
+describe("players can remove a ship from their game board", () => {
   let ship;
   beforeAll(() => {
     player1 = Player();
@@ -80,7 +80,7 @@ describe("players can change a ship axis", () => {
     player1 = Player();
     player2 = AiPlayer();
     ship = player1.createShip([0, 0], 4, "x");
-    newShip = player1.changeShipAxis(ship, "y");
+    newShip = player1.changeShipAxis(ship);
   });
 
   afterAll(() => {
@@ -94,6 +94,26 @@ describe("players can change a ship axis", () => {
 
   test("player's gameBoard contain the new ship", () => {
     expect(player1.getGameBoard().getShips()).toContain(newShip);
+  });
+});
+
+describe("random ships get created correctly", () => {
+  const player = Player();
+  const len = 4;
+  const ship = player.getRandomShip(len);
+  test("ship has correct length", () => {
+    expect(ship.getLen()).toBe(len);
+  });
+  test("ship has 'x' axis or 'y'", () => {
+    expect(ship.getAxis().length).toBe(1);
+  });
+  test("ship's placement is valid for 100 times", () => {
+    for (let i = 0; i < 100; i++) {
+      const ship = player.getRandomShip(len);
+      expect(
+        player.checkPlacement(ship.getCreatePos(), len, ship.getAxis())
+      ).toBeTruthy();
+    }
   });
 });
 

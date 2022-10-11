@@ -98,7 +98,7 @@ describe("changing a ship axis for a ship with original axis of 'x'", () => {
   let ship1;
   beforeAll(() => {
     ship1 = gameBoard.createShip([0, 0], 4, "x");
-    newShip = gameBoard.changeShipAxis(ship1, "y");
+    newShip = gameBoard.changeShipAxis(ship1);
   });
   afterAll(() => {
     gameBoard = GameBoard(gameBoardLen);
@@ -135,7 +135,7 @@ describe("changing a ship axis for a ship with original axis of 'y'", () => {
   let ship1;
   beforeAll(() => {
     ship1 = gameBoard.createShip([0, 0], 4, "y");
-    newShip = gameBoard.changeShipAxis(ship1, "x");
+    newShip = gameBoard.changeShipAxis(ship1);
   });
   afterAll(() => {
     gameBoard = GameBoard(gameBoardLen);
