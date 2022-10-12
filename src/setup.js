@@ -45,10 +45,12 @@ function populateBoardRandom(player, boardDiv, shipsLenghts) {
   });
 }
 
+// TODO
 // initialize the setup
-function initializeSetup(mainDiv) {
-  boardDiv = populatedBoard(div);
-}
+// function initializeSetup(mainDiv) {
+//   boardDiv = populatedBoard(div);
+
+// }
 
 export {
   shipsLenghts,
