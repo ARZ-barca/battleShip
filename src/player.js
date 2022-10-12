@@ -181,4 +181,4 @@ function AiPlayer() {
 }
 
 export default Player;
-export { gameBoardLen, AiPlayer };
+export { gameBoardLen, AiPlayer, getRandomAxis };

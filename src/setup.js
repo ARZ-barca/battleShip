@@ -12,7 +12,7 @@ function createShip(player, boardDiv, createPos, len, axis) {
   return ship;
 }
 
-// removes a ship from board and from player's board object
+// removes a ship from board div and from player's board object
 function removeShip(ship, player, boardDiv) {
   player.removeShip(ship);
   const shipPositions = predictShipPositions(
@@ -23,6 +23,7 @@ function removeShip(ship, player, boardDiv) {
   removeShipFromBoard(shipPositions, boardDiv);
 }
 
+// changes a ship axis in board div and in player's board object if possible
 function changeShipAxis(ship, player, boardDiv) {
   removeShip(ship, player, boardDiv);
   const createPos = ship.getCreatePos();
@@ -35,4 +36,24 @@ function changeShipAxis(ship, player, boardDiv) {
   return createShip(player, boardDiv, createPos, len, oldAxis);
 }
 
-export { shipsLenghts, createShip, removeShip, changeShipAxis };
+// populate the board div and players board
+// with random ships with shipsLengths defined before
+function populateBoardRandom(player, boardDiv, shipsLenghts) {
+  shipsLenghts.forEach((len) => {
+    const ship = player.getRandomShip(len);
+    createShip(player, boardDiv, ship.getCreatePos(), len, ship.getAxis());
+  });
+}
+
+// initialize the setup
+function initializeSetup(mainDiv) {
+  boardDiv = populatedBoard(div);
+}
+
+export {
+  shipsLenghts,
+  createShip,
+  removeShip,
+  changeShipAxis,
+  populateBoardRandom,
+};

@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import Player, { gameBoardLen, AiPlayer } from "./player";
+import Player, { gameBoardLen, AiPlayer, getRandomAxis } from "./player";
 
 let player1;
 let player2;
@@ -114,6 +114,15 @@ describe("random ships get created correctly", () => {
         player.checkPlacement(ship.getCreatePos(), len, ship.getAxis())
       ).toBeTruthy();
     }
+  });
+
+  test("random ships dont have same axis always", () => {
+    const randomAxises = [];
+    for (let i = 0; i < 100; i++) {
+      randomAxises.push(getRandomAxis());
+    }
+    expect(randomAxises).toContain("x");
+    expect(randomAxises).toContain("y");
   });
 });
 

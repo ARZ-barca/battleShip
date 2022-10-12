@@ -5,9 +5,15 @@
 
 import Player, { gameBoardLen } from "./player";
 import { populatedSetupBoard } from "./setup-dom";
-import { changeShipAxis, createShip, removeShip } from "./setup";
+import {
+  changeShipAxis,
+  createShip,
+  removeShip,
+  shipsLenghts,
+  populateBoardRandom,
+} from "./setup";
 
-describe("create ship effects dom and player board", () => {
+describe("create ship", () => {
   const player = Player();
   const boardDiv = populatedSetupBoard();
   createShip(player, boardDiv, [0, 0], 2, "x");
@@ -26,7 +32,7 @@ describe("create ship effects dom and player board", () => {
   });
 });
 
-describe("remove ship effects dom and player board", () => {
+describe("remove ship", () => {
   const player = Player();
   const boardDiv = populatedSetupBoard();
   const ship = createShip(player, boardDiv, [0, 0], 2, "x");
@@ -46,7 +52,7 @@ describe("remove ship effects dom and player board", () => {
   });
 });
 
-describe("change ship axis effects dom and player board", () => {
+describe("change ship axis", () => {
   describe("we can change ship axis for a ship that is possible to do", () => {
     const player = Player();
     const boardDiv = populatedSetupBoard();
@@ -77,7 +83,7 @@ describe("change ship axis effects dom and player board", () => {
       });
     });
   });
-  describe("we can't change ship axis for a ship that is possible to do", () => {
+  describe("we can't change ship axis for a ship that is not possible to do", () => {
     const player = Player();
     const boardDiv = populatedSetupBoard();
     const ship = createShip(player, boardDiv, [gameBoardLen - 1, 0], 2, "x");
@@ -87,3 +93,22 @@ describe("change ship axis effects dom and player board", () => {
     });
   });
 });
+
+describe("populate board with random ship's", () => {
+  const player = Player();
+  const boardDiv = populatedSetupBoard();
+  populateBoardRandom(player, boardDiv, shipsLenghts);
+  test("player's board has correct number of ships", () => {
+    expect(player.getGameBoard().getShips().length).toBe(shipsLenghts.length);
+  });
+  test("ship's aren't the same", () => {
+    const ships = player.getGameBoard().getShips();
+    expect(ships[0].getCreatePos()).not.toEqual(ships[1].getCreatePos());
+  });
+});
+
+// TODO
+// describe("setup initialize", () => {
+//   const mainDiv = Player();
+
+// });
