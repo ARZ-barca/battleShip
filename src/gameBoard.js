@@ -157,16 +157,6 @@ function getHitShip(ships, attackPosition) {
   }
 }
 
-// // mark around a ship in game board as unavailableShot for hit
-// function markAroundShip(state, ship) {
-//   const aroundPositions = getPositionsAroundShip(state, ship);
-//   aroundPositions.forEach((p) => {
-//     if (!state.missedShots.includes(p) && !state.unavailableShots.includes(p)) {
-//       state.unavailableShots.push(p);
-//     }
-//   });
-// }
-
 // checks an attack for hit or miss
 function checkAttack(state, attackPosition) {
   if (state.positions[String(attackPosition)] === "ship") {
@@ -189,28 +179,12 @@ function receiveAttack(state, attackPosition) {
     ship.hit(attackPosition);
     return ship;
   }
-  //   if (ship.isSunk()) {
-  //     markAroundShip(state, ship);
-  //   }
-  // } else {
-  //   state.missedShots.push(String(attackPosition));
-  // }
 }
 
 // adds receiveAttack method to an object
 const addReceiveAttack = (state) => ({
   receiveAttack: (attackPosition) => receiveAttack(state, attackPosition),
 });
-
-// // method for getting attacks on a ship
-// const addGetAttacks = (state) => ({
-//   getAttacks() {
-//     const { missedShots } = state;
-//     const { hitShots } = state;
-//     const { unavailableShots } = state;
-//     return { missedShots, hitShots, unavailableShots };
-//   },
-// });
 
 // method for checking if the game is over
 function isGameOver(state) {
@@ -235,10 +209,6 @@ function GameBoard(gameBoardLen) {
     positions: {},
     ships: [],
     gameBoardLen,
-    // used after the ship placement
-    // missedShots: [],
-    // hitShots: [],
-    // unavailableShots: [],
   };
 
   // populating the game board
@@ -256,7 +226,6 @@ function GameBoard(gameBoardLen) {
     ...addChangeShipAxis(state),
     ...addCheckPlacement(state),
     ...addReceiveAttack(state),
-    // ...addGetAttacks(state),
     ...addisGameOver(state),
     ...addCheckAttack(state),
     ...addGetPositionsAroundShip(state),
