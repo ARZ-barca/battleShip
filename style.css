@@ -15,12 +15,34 @@
   border: 2px solid black;
 }
 
+.game-board.finished {
+  pointer-events: none;
+}
+
 .position {
   border: 1px solid black;
 }
 
 .ship {
   background-color: green;
+}
+
+.position.hit,
+.position.miss,
+.position.invalid {
+  pointer-events: none;
+}
+
+.position.hit {
+  background-color: red;
+}
+
+.position.miss {
+  background-color: yellowgreen;
+}
+
+.position.invalid {
+  background-color: gray;
 }
 
 .selectable {
