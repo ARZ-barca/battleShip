@@ -280,6 +280,61 @@ describe("get the ship that got hit", () => {
   });
 });
 
+describe("game board receive attack", () => {
+  let ship1;
+  let ship2;
+  beforeAll(() => {
+    ship1 = gameBoard.createShip([0, 0], 4, "x");
+    ship2 = gameBoard.createShip([2, 0], 2, "x");
+    gameBoard.receiveAttack([0, 0]);
+    gameBoard.receiveAttack([0, 2]);
+    gameBoard.receiveAttack([2, 0]);
+    gameBoard.receiveAttack([3, 0]);
+    gameBoard.receiveAttack([2, 1]);
+  });
+  afterAll(() => {
+    gameBoard = GameBoard(gameBoardLen);
+  });
+  test("first ship got hit", () => {
+    expect(ship1.getPositions()).toEqual({
+      "0,0": "hit",
+      "0,1": "good",
+      "0,2": "hit",
+      "0,3": "good",
+    });
+    expect(ship1.isSunk()).toBeFalsy();
+  });
+  test("second ship got hit", () => {
+    expect(ship2.getPositions()).toEqual({
+      "2,0": "hit",
+      "2,1": "hit",
+    });
+    expect(ship2.isSunk()).toBeTruthy();
+  });
+});
+
+describe("game over", () => {
+  beforeAll(() => {
+    gameBoard.createShip([0, 0], 4, "x");
+    gameBoard.createShip([2, 0], 2, "x");
+    gameBoard.receiveAttack([0, 0]);
+    gameBoard.receiveAttack([0, 1]);
+    gameBoard.receiveAttack([0, 2]);
+    gameBoard.receiveAttack([2, 0]);
+    gameBoard.receiveAttack([2, 1]);
+  });
+  afterAll(() => {
+    gameBoard = GameBoard(gameBoardLen);
+  });
+  test("game is not over", () => {
+    expect(gameBoard.isGameOver()).toBeFalsy();
+  });
+  test("game is over", () => {
+    gameBoard.receiveAttack([0, 3]);
+    expect(gameBoard.isGameOver()).toBeTruthy();
+  });
+});
+
 // describe("game board receiveAttack functionality", () => {
 //   let ship;
 //   beforeAll(() => {

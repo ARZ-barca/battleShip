@@ -154,38 +154,55 @@ describe("clear player's board", () => {
   });
 });
 
-// test("players initialize their shots correctly", () => {
-//   expect(player1.getAvailableShots().length).toBe(gameBoardLen ** 2);
-//   expect(player1.getAvailableShots()[0]).toBe("0,0");
-// });
+test("players initialize their shots correctly", () => {
+  expect(player1.getAvailableShots().length).toBe(gameBoardLen ** 2);
+  expect(player1.getAvailableShots()[0]).toBe("0,0");
+});
 
-// describe("players attack funtionality", () => {
-//   beforeAll(() => {
-//     player1.attack(player2.getGameBoard(), [0, 0]);
-//   });
-//   afterAll(() => {
-//     player1 = Player();
-//     player2 = AiPlayer();
-//   });
-//   test("players attack registers correctley", () => {
-//     expect(player1.getAvailableShots().length).toBe(gameBoardLen ** 2 - 1);
-//     expect(player1.getAvailableShots()).not.toContain("0,0");
-//   });
-//   test("oponent recieved the attack correctly", () => {
-//     expect(player2.getGameBoard().getAttacks().missedShots).toContain(
-//       String([0, 0])
-//     );
-//   });
-//   describe("ai choosing attack position works correctly", () => {
-//     beforeAll(() => {
-//       for (let i = 0; i < gameBoardLen ** 2 - 3; i++) {
-//         player2.attack(player1.getGameBoard(), player2.getAttackPosition());
-//       }
-//     });
-//     test("ai player chooses one of available shots", () => {
-//       expect(player2.getAvailableShots()).toContain(
-//         player2.getAttackPosition()
-//       );
-//     });
-//   });
-// });
+describe("players attack funtionality", () => {
+  beforeAll(() => {
+    player1 = Player();
+    player2 = AiPlayer();
+    player2.createShip([0, 0], 2, "x");
+  });
+  afterAll(() => {
+    player1 = Player();
+    player2 = AiPlayer();
+  });
+  test("players attack registers correctley", () => {
+    player1.attack(player2.getGameBoard(), [0, 0]);
+    expect(player1.getAvailableShots().length).toBe(gameBoardLen ** 2 - 1);
+    expect(player1.getAvailableShots()).not.toContain("0,0");
+  });
+  test("oponent ship sunk", () => {
+    const ship = player1.attack(player2.getGameBoard(), [0, 1]);
+    expect(ship.isSunk()).toBeTruthy();
+    expect(player1.getAvailableShots()).not.toContain("0,1");
+  });
+  test("players miss attacks registers correctley", () => {
+    const ship = player1.attack(player2.getGameBoard(), [2, 2]);
+    expect(ship).toBeUndefined();
+  });
+  test("around the ships removed from available shots", () => {
+    expect(player1.getAvailableShots()).not.toContain("0,2");
+    expect(player1.getAvailableShots()).not.toContain("1,0");
+    expect(player1.getAvailableShots()).not.toContain("1,1");
+    expect(player1.getAvailableShots()).not.toContain("1,2");
+    expect(player1.getAvailableShots().length).toBe(gameBoardLen ** 2 - 7);
+  });
+  describe("ai choosing attack position works correctly", () => {
+    beforeAll(() => {
+      for (let i = 0; i < gameBoardLen ** 2 - 3; i++) {
+        player2.attack(player1.getGameBoard(), player2.getAttackPosition());
+      }
+    });
+    test("ai player chooses one of available shots", () => {
+      expect(player2.getAvailableShots()).toContain(
+        player2.getAttackPosition()
+      );
+    });
+    test("correct amount of shots", () => {
+      expect(player2.getAvailableShots().length).toBe(3);
+    });
+  });
+});

@@ -5,7 +5,8 @@ import {
   populatedSetupBoard,
   clearBoardDiv,
 } from "./setup-dom";
-import Player from "./player";
+import Player, { AiPlayer } from "./player";
+import main from "./gamePlay";
 
 // ships to be created len
 const shipsLenghts = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
@@ -51,24 +52,42 @@ function populateBoardRandom(player, boardDiv, shipsLenghts) {
   });
 }
 
-// function createRandomBoard()
-
 // initialize the setup
 function initializeSetup(mainDiv) {
-  const boardDiv = populatedSetupBoard();
+  const playerBoardDiv = populatedSetupBoard();
+  // playerBoardDiv.classList.add("player");
   const player = Player();
+
   const boardDivContainer = document.createElement("div");
   boardDivContainer.classList.add("board-container");
-  boardDivContainer.appendChild(boardDiv);
+  boardDivContainer.appendChild(playerBoardDiv);
+
   const randomButton = document.createElement("button");
   randomButton.textContent = "random";
   randomButton.classList.add("random");
+
+  const startButton = document.createElement("button");
+  startButton.textContent = "start";
+  startButton.classList.add("start");
+
   mainDiv.appendChild(boardDivContainer);
   mainDiv.appendChild(randomButton);
+  mainDiv.appendChild(startButton);
+
+  populateBoardRandom(player, playerBoardDiv, shipsLenghts);
+
   randomButton.addEventListener("click", () => {
     player.clear();
-    clearBoardDiv(boardDiv);
-    populateBoardRandom(player, boardDiv, shipsLenghts);
+    clearBoardDiv(playerBoardDiv);
+    populateBoardRandom(player, playerBoardDiv, shipsLenghts);
+  });
+
+  startButton.addEventListener("click", () => {
+    const aiPlayer = AiPlayer();
+    const aiBoardDiv = populatedSetupBoard();
+    populateBoardRandom(aiPlayer, aiBoardDiv, shipsLenghts);
+    mainDiv.innerHTML = "";
+    main(mainDiv, player, aiPlayer, playerBoardDiv, aiBoardDiv);
   });
 }
 

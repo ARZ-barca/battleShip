@@ -180,24 +180,27 @@ const addCheckAttack = (state) => ({
   checkAttack: (attackPosition) => checkAttack(state, attackPosition),
 });
 
-// // method for receieveing an attack
-// function receiveAttack(state, attackPosition) {
-//   if (checkAttack(state, attackPosition)) {
-//     state.hitShots.push(String(attackPosition));
-//     const ship = getHitShip(state.ships, attackPosition);
-//     ship.hit(attackPosition);
-//     if (ship.isSunk()) {
-//       markAroundShip(state, ship);
-//     }
-//   } else {
-//     state.missedShots.push(String(attackPosition));
-//   }
-// }
+// method for receieveing an attack
+// if it hits returns the ship that got hit
+function receiveAttack(state, attackPosition) {
+  if (checkAttack(state, attackPosition)) {
+    // state.hitShots.push(String(attackPosition));
+    const ship = getHitShip(state.ships, attackPosition);
+    ship.hit(attackPosition);
+    return ship;
+  }
+  //   if (ship.isSunk()) {
+  //     markAroundShip(state, ship);
+  //   }
+  // } else {
+  //   state.missedShots.push(String(attackPosition));
+  // }
+}
 
-// // adds receiveAttack method to an object
-// const addReceiveAttack = (state) => ({
-//   receiveAttack: (attackPosition) => receiveAttack(state, attackPosition),
-// });
+// adds receiveAttack method to an object
+const addReceiveAttack = (state) => ({
+  receiveAttack: (attackPosition) => receiveAttack(state, attackPosition),
+});
 
 // // method for getting attacks on a ship
 // const addGetAttacks = (state) => ({
@@ -209,21 +212,21 @@ const addCheckAttack = (state) => ({
 //   },
 // });
 
-// // method for checking if the game is over
-// function isGameOver(state) {
-//   let gameOver = true;
-//   state.ships.forEach((ship) => {
-//     if (!ship.isSunk()) {
-//       gameOver = false;
-//     }
-//   });
-//   return gameOver;
-// }
+// method for checking if the game is over
+function isGameOver(state) {
+  let gameOver = true;
+  state.ships.forEach((ship) => {
+    if (!ship.isSunk()) {
+      gameOver = false;
+    }
+  });
+  return gameOver;
+}
 
-// // add isGameOver to an object
-// const addisGameOver = (state) => ({
-//   isGameOver: () => isGameOver(state),
-// });
+// add isGameOver to an object
+const addisGameOver = (state) => ({
+  isGameOver: () => isGameOver(state),
+});
 
 // game board factory function
 function GameBoard(gameBoardLen) {
@@ -252,9 +255,9 @@ function GameBoard(gameBoardLen) {
     ...addRemoveShip(state),
     ...addChangeShipAxis(state),
     ...addCheckPlacement(state),
-    // ...addReceiveAttack(state),
+    ...addReceiveAttack(state),
     // ...addGetAttacks(state),
-    // ...addisGameOver(state),
+    ...addisGameOver(state),
     ...addCheckAttack(state),
     ...addGetPositionsAroundShip(state),
   };
