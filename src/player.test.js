@@ -126,6 +126,34 @@ describe("random ships get created correctly", () => {
   });
 });
 
+describe("clear player's board", () => {
+  const player = Player();
+  const ship1 = player.createShip([9, 0], 4, "x");
+  const ship2 = player.createShip([0, 0], 4, "x");
+  const ship3 = player.createShip([4, 4], 4, "x");
+  const ship4 = player.createShip([4, 4], 4, "x");
+  const ship5 = player.createShip([4, 4], 4, "x");
+  const ship6 = player.createShip([4, 4], 4, "x");
+  const ship7 = player.createShip([4, 4], 4, "x");
+  const ship8 = player.createShip([4, 4], 4, "x");
+  player.clear();
+
+  test("player have 0 ships", () => {
+    expect(player.getGameBoard().getShips().length).toBe(0);
+  });
+
+  test("player have 0 ships", () => {
+    expect(player.getGameBoard().getShips()).not.toContain(ship1);
+    expect(player.getGameBoard().getShips()).not.toContain(ship2);
+    expect(player.getGameBoard().getShips()).not.toContain(ship3);
+    expect(player.getGameBoard().getShips()).not.toContain(ship4);
+    expect(player.getGameBoard().getShips()).not.toContain(ship5);
+    expect(player.getGameBoard().getShips()).not.toContain(ship6);
+    expect(player.getGameBoard().getShips()).not.toContain(ship7);
+    expect(player.getGameBoard().getShips()).not.toContain(ship8);
+  });
+});
+
 // test("players initialize their shots correctly", () => {
 //   expect(player1.getAvailableShots().length).toBe(gameBoardLen ** 2);
 //   expect(player1.getAvailableShots()[0]).toBe("0,0");

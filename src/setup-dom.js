@@ -39,11 +39,18 @@ function removeShipFromBoard(shipPositions, boardDiv) {
   });
 }
 
+function clearBoardDiv(boardDiv) {
+  [...boardDiv.children].forEach((element) => {
+    element.classList.remove("ship");
+  });
+}
+
 export {
   populatedSetupBoard,
   addEventToBoard,
   markShipOnBoard,
   removeShipFromBoard,
+  clearBoardDiv,
 };
 
 // import Player, { AiPlayer, gameBoardLen as len } from "./player";

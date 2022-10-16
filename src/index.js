@@ -1,3 +1,4 @@
-import main from "./dom";
+import initializeSetup from "./setup";
 
-main();
+const mainDiv = document.querySelector("main");
+initializeSetup(mainDiv);

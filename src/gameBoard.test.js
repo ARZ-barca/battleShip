@@ -73,9 +73,20 @@ describe("ship creation tests", () => {
 
 describe("removing a ship", () => {
   let ship1;
+  let ship2;
+  let ship3;
+  let ship4;
+  let ship5;
   beforeAll(() => {
     ship1 = gameBoard.createShip([0, 0], 4, "x");
+    ship2 = gameBoard.createShip([9, 0], 4, "x");
+    ship3 = gameBoard.createShip([9, 0], 4, "x");
+    ship4 = gameBoard.createShip([9, 0], 4, "x");
+    ship5 = gameBoard.createShip([9, 0], 4, "x");
     gameBoard.removeShip(ship1);
+    gameBoard.removeShip(ship2);
+    gameBoard.removeShip(ship3);
+    gameBoard.removeShip(ship4);
   });
   afterAll(() => {
     gameBoard = GameBoard(gameBoardLen);
@@ -88,8 +99,19 @@ describe("removing a ship", () => {
     expect(gameBoard.getPositions()[String([1, 0])]).toBe("empty");
     expect(gameBoard.getPositions()[String([0, 4])]).toBe("empty");
   });
-  test("game board dosn't has the ship", () => {
+  test("game board dosn't have the removed ships", () => {
     expect(gameBoard.getShips()).not.toContain(ship1);
+    expect(gameBoard.getShips()).not.toContain(ship2);
+    expect(gameBoard.getShips()).not.toContain(ship3);
+    expect(gameBoard.getShips()).not.toContain(ship4);
+  });
+
+  test("game board dosn't have the removed ships", () => {
+    expect(gameBoard.getShips()).toContain(ship5);
+  });
+
+  test("game board has correct number of ships", () => {
+    expect(gameBoard.getShips().length).toBe(1);
   });
 });
 

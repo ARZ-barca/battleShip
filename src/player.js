@@ -104,6 +104,19 @@ const addGetRandomShip = (state) => ({
   getRandomShip: (len) => getRandomShip(state, len),
 });
 
+function clear(state) {
+  const ships = [...state.gameBoard.getShips()];
+  for (let i = 0; i < ships.length; i++) {
+    state.gameBoard.removeShip(ships[i]);
+  }
+}
+
+const addClear = (state) => ({
+  clear: () => {
+    clear(state);
+  },
+});
+
 // // add addGetAvailableShots method to an object
 // const addGetAvailableShots = (state) => ({
 //   getAvailableShots: () => state.availableShots,
@@ -151,6 +164,7 @@ function Player() {
     ...addRemoveShip(state),
     ...addChangeShipAxis(state),
     ...addGetRandomShip(state),
+    ...addClear(state),
     // ...addGetAvailableShots(state),
     // ...addAttack(state),
   };
@@ -174,6 +188,7 @@ function AiPlayer() {
     ...addRemoveShip(state),
     ...addChangeShipAxis(state),
     ...addGetRandomShip(state),
+    ...addClear(state),
     // ...addGetAvailableShots(state),
     // ...addAttack(state),
     // ...addGetAttackPosition(state),

@@ -9,6 +9,7 @@ import {
   addEventToBoard,
   markShipOnBoard,
   removeShipFromBoard,
+  clearBoardDiv,
 } from "./setup-dom";
 import { predictShipPositions } from "./ships";
 
@@ -64,5 +65,24 @@ describe("ships on board get removed correctly", () => {
   });
   test("ships second position doesn't have 'ship' class", () => {
     expect(pos2.getAttribute("class")).not.toContain("ship");
+  });
+});
+
+describe("clearing a board div", () => {
+  const shipPositions1 = predictShipPositions([0, 0], 2, "y");
+  const shipPositions2 = predictShipPositions([0, 2], 1, "y");
+  const shipPositions3 = predictShipPositions([0, 4], 1, "x");
+  const shipPositions4 = predictShipPositions([0, 6], 4, "y");
+  const boardDiv = populatedSetupBoard();
+  markShipOnBoard(shipPositions1, boardDiv);
+  markShipOnBoard(shipPositions2, boardDiv);
+  markShipOnBoard(shipPositions3, boardDiv);
+  markShipOnBoard(shipPositions4, boardDiv);
+
+  clearBoardDiv(boardDiv);
+  test("none of board positions have class 'ship'", () => {
+    [...boardDiv.children].forEach((element) => {
+      expect(element.getAttribute("class")).not.toContain("ship");
+    });
   });
 });

@@ -106,9 +106,3 @@ describe("populate board with random ship's", () => {
     expect(ships[0].getCreatePos()).not.toEqual(ships[1].getCreatePos());
   });
 });
-
-// TODO
-// describe("setup initialize", () => {
-//   const mainDiv = Player();
-
-// });

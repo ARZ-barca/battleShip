@@ -1,5 +1,11 @@
 import { predictShipPositions } from "./ships";
-import { markShipOnBoard, removeShipFromBoard } from "./setup-dom";
+import {
+  markShipOnBoard,
+  removeShipFromBoard,
+  populatedSetupBoard,
+  clearBoardDiv,
+} from "./setup-dom";
+import Player from "./player";
 
 // ships to be created len
 const shipsLenghts = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
@@ -45,12 +51,28 @@ function populateBoardRandom(player, boardDiv, shipsLenghts) {
   });
 }
 
-// TODO
-// initialize the setup
-// function initializeSetup(mainDiv) {
-//   boardDiv = populatedBoard(div);
+// function createRandomBoard()
 
-// }
+// initialize the setup
+function initializeSetup(mainDiv) {
+  const boardDiv = populatedSetupBoard();
+  const player = Player();
+  const boardDivContainer = document.createElement("div");
+  boardDivContainer.classList.add("board-container");
+  boardDivContainer.appendChild(boardDiv);
+  const randomButton = document.createElement("button");
+  randomButton.textContent = "random";
+  randomButton.classList.add("random");
+  mainDiv.appendChild(boardDivContainer);
+  mainDiv.appendChild(randomButton);
+  randomButton.addEventListener("click", () => {
+    player.clear();
+    clearBoardDiv(boardDiv);
+    populateBoardRandom(player, boardDiv, shipsLenghts);
+  });
+}
+
+export default initializeSetup;
 
 export {
   shipsLenghts,
