@@ -1,18 +1,18 @@
-// // method that marks a position as hit
-// function addHit(state) {
-//   return {
-//     hit(hitPosition) {
-//       state.positions[String(hitPosition)] = "hit";
-//     },
-//   };
-// }
+// method that marks a position as hit
+function addHit(state) {
+  return {
+    hit(hitPosition) {
+      state.positions[String(hitPosition)] = "hit";
+    },
+  };
+}
 
-// // check if ship is sunk
-// const addIsSunk = (state) => ({
-//   isSunk() {
-//     return Object.values(state.positions).every((value) => value === "hit");
-//   },
-// });
+// check if ship is sunk
+const addIsSunk = (state) => ({
+  isSunk() {
+    return Object.values(state.positions).every((value) => value === "hit");
+  },
+});
 
 // method for getting positions of ship
 const addGetPositions = (state) => ({
@@ -79,8 +79,8 @@ function Ship(createPos, len, axis) {
 
   return {
     ...addGetPositions(state),
-    // ...addIsSunk(state),
-    // ...addHit(state),
+    ...addIsSunk(state),
+    ...addHit(state),
     ...addGetLen(state),
     ...addGetCreatePos(state),
     ...addGetLastPos(state),

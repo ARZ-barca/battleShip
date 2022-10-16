@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import GameBoard from "./gameBoard";
+import GameBoard, { getHitShip } from "./gameBoard";
 
 const gameBoardLen = 10;
 let gameBoard;
@@ -243,22 +243,42 @@ describe("removing ships tests", () => {
   });
 });
 
-// describe("game board check attack correctly", () => {
-//   beforeAll(() => {
-//     gameBoard.createShip([0, 0], 4, "x");
-//   });
-//   afterAll(() => {
-//     gameBoard = GameBoard(gameBoardLen);
-//   });
+describe("game board check attack correctly", () => {
+  beforeAll(() => {
+    gameBoard.createShip([0, 0], 4, "x");
+  });
+  afterAll(() => {
+    gameBoard = GameBoard(gameBoardLen);
+  });
 
-//   test("gameboard recognizes an attack will miss", () => {
-//     expect(gameBoard.checkAttack([1, 0])).toBeFalsy();
-//   });
+  test("gameboard recognizes an attack will miss", () => {
+    expect(gameBoard.checkAttack([1, 0])).toBeFalsy();
+  });
 
-//   test("gameboard recognizes an attack will miss", () => {
-//     expect(gameBoard.checkAttack([0, 0])).toBeTruthy();
-//   });
-// });
+  test("gameboard recognizes an attack will miss", () => {
+    expect(gameBoard.checkAttack([0, 0])).toBeTruthy();
+  });
+});
+
+describe("get the ship that got hit", () => {
+  let ship1;
+  let ship2;
+  beforeAll(() => {
+    ship1 = gameBoard.createShip([0, 0], 4, "x");
+    ship2 = gameBoard.createShip([2, 0], 4, "x");
+  });
+  afterAll(() => {
+    gameBoard = GameBoard(gameBoardLen);
+  });
+
+  test("first ship got hit", () => {
+    expect(getHitShip(gameBoard.getShips(), [0, 0])).toBe(ship1);
+  });
+
+  test("second ship got hit", () => {
+    expect(getHitShip(gameBoard.getShips(), [2, 0])).toBe(ship2);
+  });
+});
 
 // describe("game board receiveAttack functionality", () => {
 //   let ship;

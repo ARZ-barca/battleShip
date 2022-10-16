@@ -1,6 +1,13 @@
 /* eslint-disable no-undef */
 
-import Ship from "./ships";
+import Ship, { predictShipPositions } from "./ships";
+
+test("predict a ship positions", () => {
+  expect(predictShipPositions([1, 1], 2, "y")).toEqual([
+    [1, 1],
+    [2, 1],
+  ]);
+});
 
 describe("Ship factory function for a ship with create pocation of [0, 0] and length of 4 and on x axis", () => {
   const createPos = [0, 0];
@@ -37,20 +44,20 @@ describe("Ship factory function for a ship with create pocation of [0, 0] and le
     expect(ship.getLen()).toBe(4);
   });
 
-  // test("ships hit method works properly", () => {
-  //   const hitPosition = [0, 0];
-  //   ship.hit(hitPosition);
-  //   expect(ship.getPositions()[String(hitPosition)]).toBe("hit");
-  // });
+  test("ships hit method works properly", () => {
+    const hitPosition = [0, 0];
+    ship.hit(hitPosition);
+    expect(ship.getPositions()[String(hitPosition)]).toBe("hit");
+  });
 
-  // test("if you hit every position isSunk method returns true and false otherwise", () => {
-  //   ship.hit([0, 0]);
-  //   ship.hit([0, 1]);
-  //   ship.hit([0, 2]);
-  //   expect(ship.isSunk()).toBeFalsy();
-  //   ship.hit([0, 3]);
-  //   expect(ship.isSunk()).toBeTruthy();
-  // });
+  test("if you hit every position isSunk method returns true and false otherwise", () => {
+    ship.hit([0, 0]);
+    ship.hit([0, 1]);
+    ship.hit([0, 2]);
+    expect(ship.isSunk()).toBeFalsy();
+    ship.hit([0, 3]);
+    expect(ship.isSunk()).toBeTruthy();
+  });
 });
 
 describe("Ship factory function for a ship with create location of [5, 5] and length of 4 and on Y axis", () => {
