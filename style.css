@@ -33,6 +33,10 @@
   pointer-events: none;
 }
 
+.position.ship.selected {
+  background-color: orange;
+}
+
 .position.hit {
   background-color: red;
 }
