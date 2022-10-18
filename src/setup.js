@@ -6,7 +6,9 @@ import {
   clearBoardDiv,
 } from "./setup-dom";
 import Player, { AiPlayer } from "./player";
+// eslint-disable-next-line import/no-cycle
 import main from "./gamePlay";
+import boardActivate, { removeSelectedShip } from "./ship-placement";
 
 // ships to be created len
 const shipsLenghts = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
@@ -75,11 +77,13 @@ function initializeSetup(mainDiv) {
   mainDiv.appendChild(startButton);
 
   populateBoardRandom(player, playerBoardDiv, shipsLenghts);
-
+  boardActivate(playerBoardDiv, player.getGameBoard());
   randomButton.addEventListener("click", () => {
     player.clear();
     clearBoardDiv(playerBoardDiv);
     populateBoardRandom(player, playerBoardDiv, shipsLenghts);
+    // removes the selected ship from memory for ship placement
+    removeSelectedShip();
   });
 
   startButton.addEventListener("click", () => {

@@ -41,7 +41,7 @@ function removeShipFromBoard(shipPositions, boardDiv) {
 
 function clearBoardDiv(boardDiv) {
   [...boardDiv.children].forEach((element) => {
-    element.classList.remove("ship");
+    element.classList.remove("ship", "selected");
   });
 }
 
