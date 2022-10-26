@@ -1,8 +1,8 @@
 // method that marks a position as hit
-function addHit(state) {
+function addGetHit(state) {
   return {
-    hit(hitPosition) {
-      state.positions[String(hitPosition)] = "hit";
+    getHit(position) {
+      state.positions[String(position)] = "hit";
     },
   };
 }
@@ -14,46 +14,16 @@ const addIsSunk = (state) => ({
   },
 });
 
-// method for getting positions of ship
-const addGetPositions = (state) => ({
-  getPositions() {
-    return state.positions;
-  },
-});
-
-const addGetLen = (state) => ({
-  getLen() {
-    return state.len;
-  },
-});
-
-const addGetAxis = (state) => ({
-  getAxis() {
-    return state.axis;
-  },
-});
-
-const addGetCreatePos = (state) => ({
-  getCreatePos() {
-    return state.createPos;
-  },
-});
-
-const addGetLastPos = (state) => ({
-  getLastPos() {
-    return state.lastPosition;
-  },
-});
-
 // predicts ship positions if created to check for their validity
 function predictShipPositions(createPos, len, axis) {
+  const createPosList = String(createPos).split(",");
   const positions = [];
   if (axis === "x") {
-    for (let i = createPos[0], j = createPos[1], k = 0; k < len; k++) {
+    for (let i = createPosList[0], j = createPosList[1], k = 0; k < len; k++) {
       positions.push([i, +j + k]);
     }
   } else if (axis === "y") {
-    for (let i = createPos[0], j = createPos[1], k = 0; k < len; k++) {
+    for (let i = createPosList[0], j = createPosList[1], k = 0; k < len; k++) {
       positions.push([+i + k, j]);
     }
   }
@@ -74,17 +44,21 @@ function Ship(createPos, len, axis) {
     state.positions[String(p)] = "good";
   }
 
-  // set endPostion for ship
-  [state.lastPosition] = predictedPositions.slice(-1);
-
   return {
-    ...addGetPositions(state),
+    get positions() {
+      return state.positions;
+    },
+    get len() {
+      return state.len;
+    },
+    get axis() {
+      return state.axis;
+    },
+    get createPos() {
+      return state.createPos;
+    },
     ...addIsSunk(state),
-    ...addHit(state),
-    ...addGetLen(state),
-    ...addGetCreatePos(state),
-    ...addGetLastPos(state),
-    ...addGetAxis(state),
+    ...addGetHit(state),
   };
 }
 

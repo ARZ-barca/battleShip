@@ -1,5 +1,10 @@
 import Ship, { predictShipPositions } from "./ships";
 
+// returns a random axis : 'x' or 'y'
+function getRandomAxis() {
+  return Math.floor(Math.random() * 100) % 2 === 0 ? "x" : "y";
+}
+
 // change the given positions in the game boards
 function changeGameBoardPositions(state, positions, value) {
   positions.forEach((p) => {
@@ -7,20 +12,9 @@ function changeGameBoardPositions(state, positions, value) {
   });
 }
 
-// get the ship positions as a list
-function getShipPositions(ship) {
-  return Object.keys(ship.getPositions());
-}
-
-// changes positions in game board to 'ship'
-function changeShipPositions(state, ship) {
-  const shipPositions = getShipPositions(ship);
-  changeGameBoardPositions(state, shipPositions, "ship");
-}
-
 // get positions arround ship
 function getPositionsAroundShip(state, ship) {
-  const shipPositions = getShipPositions(ship);
+  const shipPositions = Object.keys(ship.positions);
   const aroundPositions = [];
   shipPositions.forEach((p) => {
     const pAsList = p.split(",");
@@ -40,28 +34,22 @@ function getPositionsAroundShip(state, ship) {
   return aroundPositions;
 }
 
-// adds get positions around ship method to object
-const addGetPositionsAroundShip = (state) => ({
-  getPositionsAroundShip: (ship) => getPositionsAroundShip(state, ship),
-});
-
-// changes arround the ship positions to 'unavailable'
-function changeAroundShipPositions(state, ship) {
-  const aroundPositions = getPositionsAroundShip(state, ship);
-  changeGameBoardPositions(state, aroundPositions, "unavailable");
-}
-
-// add ship to the gameboard ships
-function addShipToGameBoardShips(state, ship) {
-  state.ships.push(ship);
-}
+// // adds get positions around ship method to object
+// const addGetPositionsAroundShip = (state) => ({
+//   getPositionsAroundShip: (ship) => getPositionsAroundShip(state, ship),
+// });
 
 // method for placing ships in gameboard (returns the ship)
 function createShip(state, createPos, len, axis) {
   const ship = Ship(createPos, len, axis);
-  changeShipPositions(state, ship);
-  changeAroundShipPositions(state, ship);
-  addShipToGameBoardShips(state, ship);
+  // change ship's positions
+  const shipPositions = Object.keys(ship.positions);
+  changeGameBoardPositions(state, shipPositions, "ship");
+  // change positions arround the ship
+  const aroundPositions = getPositionsAroundShip(state, ship);
+  changeGameBoardPositions(state, aroundPositions, "unavailable");
+  // adding ship to the game board ships
+  state.ships.push(ship);
   return ship;
 }
 
@@ -70,29 +58,17 @@ const addCreateShip = (state) => ({
   createShip: (createPos, len, axis) => createShip(state, createPos, len, axis),
 });
 
-// makes the ship positions 'empty'
-function emptyShipPositions(state, ship) {
-  const shipPositions = getShipPositions(ship);
-  changeGameBoardPositions(state, shipPositions, "empty");
-}
-
-// makes around the ship's position empty
-function emptyAroundShipPosition(state, ship) {
-  const aroundPositions = getPositionsAroundShip(state, ship);
-  changeGameBoardPositions(state, aroundPositions, "empty");
-}
-
-// removes the ship from gameBoard ships
-function removeShipFromGameBoardShips(state, ship) {
-  const shipIndex = state.ships.indexOf(ship);
-  state.ships.splice(shipIndex, 1);
-}
-
 // method for removing the ship (needs one arg)
 function removeShip(state, ship) {
-  emptyShipPositions(state, ship);
-  emptyAroundShipPosition(state, ship);
-  removeShipFromGameBoardShips(state, ship);
+  // change positions arround the ship
+  const aroundPositions = getPositionsAroundShip(state, ship);
+  changeGameBoardPositions(state, aroundPositions, "empty");
+  // change ship's positions
+  const shipPositions = Object.keys(ship.positions);
+  changeGameBoardPositions(state, shipPositions, "empty");
+  // remove ship from the game board ships
+  const shipIndex = state.ships.indexOf(ship);
+  state.ships.splice(shipIndex, 1);
 }
 
 // adds removeship method to an object
@@ -102,20 +78,20 @@ const addRemoveShip = (state) => ({
   },
 });
 
-// method for repositioning the ship
-function changeShipAxis(state, ship) {
-  removeShip(state, ship);
-  const shipCreatePos = ship.getCreatePos();
-  const shipLen = ship.getLen();
-  const newAxis = ship.getAxis() === "x" ? "y" : "x";
-  const newShip = createShip(state, shipCreatePos, shipLen, newAxis);
-  return newShip;
-}
+// // method for repositioning the ship
+// function changeShipAxis(state, ship) {
+//   removeShip(state, ship);
+//   const shipCreatePos = ship.getCreatePos();
+//   const shipLen = ship.getLen();
+//   const newAxis = ship.getAxis() === "x" ? "y" : "x";
+//   const newShip = createShip(state, shipCreatePos, shipLen, newAxis);
+//   return newShip;
+// }
 
-// adds changeShipAxix method to an object
-const addChangeShipAxis = (state) => ({
-  changeShipAxis: (ship, newAxis) => changeShipAxis(state, ship, newAxis),
-});
+// // adds changeShipAxix method to an object
+// const addChangeShipAxis = (state) => ({
+//   changeShipAxis: (ship, newAxis) => changeShipAxis(state, ship, newAxis),
+// });
 
 // method that checks for placement validity
 function checkPlacement(state, createPos, len, axis) {
@@ -134,56 +110,32 @@ const addCheckPlacement = (state) => ({
     checkPlacement(state, createPos, len, axis),
 });
 
-// method for getting the positions of game board
-const addGetPositions = (state) => ({
-  getPositions() {
-    return state.positions;
-  },
-});
-
-// method for getting the ships of game board
-const addGetShips = (state) => ({
-  getShips() {
-    return state.ships;
-  },
-});
-
 // returns the ship that got hit
-function getHitShip(ships, attackPosition) {
-  for (const ship of ships) {
-    if (Object.keys(ship.getPositions()).includes(String(attackPosition))) {
+function getHitShip(state, attackPosition) {
+  for (const ship of state.ships) {
+    if (Object.keys(ship.positions).includes(String(attackPosition))) {
       return ship;
     }
   }
 }
 
-// checks an attack for hit or miss
-function checkAttack(state, attackPosition) {
-  if (state.positions[String(attackPosition)] === "ship") {
-    return true;
-  }
-  return false;
-}
-
-// add check attack
-const addCheckAttack = (state) => ({
-  checkAttack: (attackPosition) => checkAttack(state, attackPosition),
+// adds getHitShip method to an object
+const addGetHitShip = (state) => ({
+  getHitShip: (attackPosition) => getHitShip(state, attackPosition),
 });
 
 // method for receieveing an attack
-// if it hits returns the ship that got hit
-function receiveAttack(state, attackPosition) {
-  if (checkAttack(state, attackPosition)) {
-    // state.hitShots.push(String(attackPosition));
-    const ship = getHitShip(state.ships, attackPosition);
-    ship.hit(attackPosition);
-    return ship;
+function getHit(state, attackPosition) {
+  const ship = getHitShip(state, attackPosition);
+  if (ship) {
+    // a ship got hit
+    ship.getHit(attackPosition);
   }
 }
 
-// adds receiveAttack method to an object
-const addReceiveAttack = (state) => ({
-  receiveAttack: (attackPosition) => receiveAttack(state, attackPosition),
+// adds getHit method to an object
+const addGetHit = (state) => ({
+  getHit: (attackPosition) => getHit(state, attackPosition),
 });
 
 // method for checking if the game is over
@@ -200,6 +152,58 @@ function isGameOver(state) {
 // add isGameOver to an object
 const addisGameOver = (state) => ({
   isGameOver: () => isGameOver(state),
+});
+
+// removes all of board's ships
+function clear(state) {
+  const shipsNumber = state.ships.length;
+  for (let i = 0; i < shipsNumber; i++) {
+    removeShip(state, state.ships[0]);
+  }
+}
+
+const addClear = (state) => ({
+  clear: () => {
+    clear(state);
+  },
+});
+
+// method returns a Ship with random create location and axis and given length
+function getRandomShip(state, len) {
+  const allPositions = Object.keys(state.positions);
+  while (true) {
+    const randomPos =
+      allPositions[Math.floor(allPositions.length * Math.random())];
+    const randomAxis = getRandomAxis();
+    if (checkPlacement(state, randomPos, len, randomAxis)) {
+      return Ship(randomPos, len, randomAxis);
+    }
+    const otherAxis = randomAxis === "x" ? "y" : "x";
+    if (checkPlacement(state, randomPos, len, otherAxis)) {
+      return Ship(randomPos, len, otherAxis);
+    }
+    allPositions.splice(allPositions.indexOf(randomPos), 1);
+  }
+}
+
+const addGetRandomShip = (state) => ({
+  getRandomShip: (len) => {
+    getRandomShip(state, len);
+  },
+});
+
+// method for randomizing the board with given arrays of lengths
+function randomize(state, lengths) {
+  for (const len of lengths) {
+    const ship = getRandomShip(state, len);
+    createShip(state, ship.createPos, ship.len, ship.axis);
+  }
+}
+
+const addRandomize = (state) => ({
+  randomize: (lengths) => {
+    randomize(state, lengths);
+  },
 });
 
 // game board factory function
@@ -219,18 +223,24 @@ function GameBoard(gameBoardLen) {
   }
 
   return {
-    ...addGetPositions(state),
-    ...addGetShips(state),
+    get positions() {
+      return state.positions;
+    },
+    get ships() {
+      return state.ships;
+    },
     ...addCreateShip(state),
     ...addRemoveShip(state),
-    ...addChangeShipAxis(state),
+    // ...addChangeShipAxis(state),
     ...addCheckPlacement(state),
-    ...addReceiveAttack(state),
+    ...addGetHitShip(state),
+    ...addGetHit(state),
     ...addisGameOver(state),
-    ...addCheckAttack(state),
-    ...addGetPositionsAroundShip(state),
+    ...addClear(state),
+    ...addGetRandomShip(state),
+    ...addRandomize(state),
   };
 }
 
 export default GameBoard;
-export { getHitShip };
+export { getRandomAxis };
