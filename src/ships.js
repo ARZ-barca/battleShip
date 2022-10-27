@@ -20,13 +20,14 @@ function predictShipPositions(createPos, len, axis) {
   const positions = [];
   if (axis === "x") {
     for (let i = createPosList[0], j = createPosList[1], k = 0; k < len; k++) {
-      positions.push([i, +j + k]);
+      positions.push([+i, +j + k]);
     }
   } else if (axis === "y") {
     for (let i = createPosList[0], j = createPosList[1], k = 0; k < len; k++) {
-      positions.push([+i + k, j]);
+      positions.push([+i + k, +j]);
     }
   }
+
   return positions;
 }
 

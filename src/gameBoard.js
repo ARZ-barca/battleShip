@@ -34,10 +34,10 @@ function getPositionsAroundShip(state, ship) {
   return aroundPositions;
 }
 
-// // adds get positions around ship method to object
-// const addGetPositionsAroundShip = (state) => ({
-//   getPositionsAroundShip: (ship) => getPositionsAroundShip(state, ship),
-// });
+// adds get positions around ship method to object
+const addGetPositionsAroundShip = (state) => ({
+  getPositionsAroundShip: (ship) => getPositionsAroundShip(state, ship),
+});
 
 // method for placing ships in gameboard (returns the ship)
 function createShip(state, createPos, len, axis) {
@@ -183,13 +183,14 @@ function getRandomShip(state, len) {
       return Ship(randomPos, len, otherAxis);
     }
     allPositions.splice(allPositions.indexOf(randomPos), 1);
+    if (allPositions.length === 0) {
+      throw new Error("board is not big enough for this many ships");
+    }
   }
 }
 
 const addGetRandomShip = (state) => ({
-  getRandomShip: (len) => {
-    getRandomShip(state, len);
-  },
+  getRandomShip: (len) => getRandomShip(state, len),
 });
 
 // method for randomizing the board with given arrays of lengths
@@ -239,6 +240,7 @@ function GameBoard(gameBoardLen) {
     ...addClear(state),
     ...addGetRandomShip(state),
     ...addRandomize(state),
+    ...addGetPositionsAroundShip(state),
   };
 }
 

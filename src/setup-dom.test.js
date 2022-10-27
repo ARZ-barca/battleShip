@@ -3,86 +3,106 @@
  */
 /* eslint-disable no-undef */
 
-import { gameBoardLen } from "./player";
+import { gameBoardLen as len } from "./player";
 import {
-  populatedSetupBoard,
-  addEventToBoard,
+  BoardDiv,
   markShipOnBoard,
-  removeShipFromBoard,
+  unmarkShipOnBoard,
   clearBoardDiv,
 } from "./setup-dom";
-import { predictShipPositions } from "./ships";
+import Ship from "./ships";
 
-describe("player gameBoard get populated correctly", () => {
-  const boardDiv = populatedSetupBoard();
+describe("BoardDiv works as expected", () => {
+  const boardDiv = BoardDiv();
   test("created div has correct number of children", () => {
-    expect(boardDiv.children.length).toBe(gameBoardLen ** 2);
+    expect(boardDiv.children.length).toBe(len ** 2);
   });
-  test("returned div has class of 'game-board'", () => {
-    expect(boardDiv.getAttribute("class")).toContain("game-board");
+  test("returned div has class of 'board'", () => {
+    expect(boardDiv.getAttribute("class")).toContain("board");
   });
-});
-
-describe("board's each position has the event listener", () => {
-  const mockCallBack = jest.fn();
-  const boardDiv = populatedSetupBoard();
-  addEventToBoard(boardDiv, mockCallBack);
-  boardDiv.children[0].click();
-  test("board first element respondes to click", () => {
-    expect(mockCallBack.mock.calls.length).toBe(1);
+  test("each of board divs has correct 'data-row' and 'data-column'", () => {
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len; j++) {
+        expect(boardDiv.children[i * len + j].getAttribute("data-row")).toBe(
+          String(i)
+        );
+        expect(boardDiv.children[i * len + j].getAttribute("data-column")).toBe(
+          String(j)
+        );
+      }
+    }
   });
 });
 
 describe("ships on board get marked correctly", () => {
-  const shipPositions = predictShipPositions([0, 0], 2, "y");
-  const boardDiv = populatedSetupBoard();
-  markShipOnBoard(shipPositions, boardDiv);
-  const pos1 = boardDiv.querySelector(".p-0-0");
-  const pos2 = boardDiv.querySelector(".p-1-0");
-  const nonShipPos1 = boardDiv.querySelector(".p-0-1");
-  const nonShipPos2 = boardDiv.querySelector(".p-1-1");
-  test("ships first position has 'ship' class", () => {
-    expect(pos1.getAttribute("class")).toContain("ship");
+  let ship;
+  let boardDiv;
+  const mark = "ship";
+  beforeAll(() => {
+    ship = Ship([0, 0], 2, "y");
+    boardDiv = BoardDiv();
+    markShipOnBoard(ship, boardDiv, mark);
   });
-  test("ships second position has 'ship' class", () => {
-    expect(pos2.getAttribute("class")).toContain("ship");
-  });
-  test("random positions don't have 'ship' class", () => {
-    expect(nonShipPos1.getAttribute("class")).not.toContain("ship");
-    expect(nonShipPos2.getAttribute("class")).not.toContain("ship");
+
+  test("ship's position's has 'ship' class", () => {
+    const firstPosDiv = boardDiv.querySelector(
+      '*[data-row="0"][data-column="0"]'
+    );
+    const secondPosDiv = boardDiv.querySelector(
+      '*[data-row="1"][data-column="0"]'
+    );
+    expect(firstPosDiv.getAttribute("class")).toContain(mark);
+    expect(secondPosDiv.getAttribute("class")).toContain(mark);
   });
 });
 
-describe("ships on board get removed correctly", () => {
-  const shipPositions = predictShipPositions([0, 0], 2, "y");
-  const boardDiv = populatedSetupBoard();
-  markShipOnBoard(shipPositions, boardDiv);
-  const pos1 = boardDiv.querySelector(".p-0-0");
-  const pos2 = boardDiv.querySelector(".p-1-0");
-  removeShipFromBoard(shipPositions, boardDiv);
-  test("ships first position doesn't have 'ship' class", () => {
-    expect(pos1.getAttribute("class")).not.toContain("ship");
+describe("ships on board get unmarked correctly", () => {
+  let ship;
+  let boardDiv;
+  const mark = "ship";
+  beforeAll(() => {
+    ship = Ship([0, 0], 2, "y");
+    boardDiv = BoardDiv();
+    markShipOnBoard(ship, boardDiv, mark);
+    unmarkShipOnBoard(ship, boardDiv, mark);
   });
-  test("ships second position doesn't have 'ship' class", () => {
-    expect(pos2.getAttribute("class")).not.toContain("ship");
+
+  test("ship's position's has 'ship' class", () => {
+    const firstPosDiv = boardDiv.querySelector(
+      '*[data-row="0"][data-column="0"]'
+    );
+    const secondPosDiv = boardDiv.querySelector(
+      '*[data-row="1"][data-column="0"]'
+    );
+    expect(firstPosDiv.getAttribute("class")).not.toContain(mark);
+    expect(secondPosDiv.getAttribute("class")).not.toContain(mark);
   });
 });
 
 describe("clearing a board div", () => {
-  const shipPositions1 = predictShipPositions([0, 0], 2, "y");
-  const shipPositions2 = predictShipPositions([0, 2], 1, "y");
-  const shipPositions3 = predictShipPositions([0, 4], 1, "x");
-  const shipPositions4 = predictShipPositions([0, 6], 4, "y");
-  const boardDiv = populatedSetupBoard();
-  markShipOnBoard(shipPositions1, boardDiv);
-  markShipOnBoard(shipPositions2, boardDiv);
-  markShipOnBoard(shipPositions3, boardDiv);
-  markShipOnBoard(shipPositions4, boardDiv);
+  const ship1 = Ship([0, 0], 2, "y");
+  const ship2 = Ship([0, 2], 1, "y");
+  const ship3 = Ship([0, 4], 1, "x");
+  const ship4 = Ship([0, 6], 4, "y");
+  const mark = "ship";
+
+  const boardDiv = BoardDiv();
+  markShipOnBoard(ship1, boardDiv, mark);
+  markShipOnBoard(ship2, boardDiv, mark);
+  markShipOnBoard(ship3, boardDiv, mark);
+  markShipOnBoard(ship4, boardDiv, mark);
 
   clearBoardDiv(boardDiv);
   test("none of board positions have class 'ship'", () => {
     [...boardDiv.children].forEach((element) => {
-      expect(element.getAttribute("class")).not.toContain("ship");
+      expect(element.getAttribute("class")).not.toContain(mark);
     });
+  });
+  test("you can mark ship on board after clearing it", () => {
+    markShipOnBoard(ship1, boardDiv, mark);
+    const firstPosDiv = boardDiv.querySelector(
+      '*[data-row="0"][data-column="0"]'
+    );
+    expect(firstPosDiv.getAttribute("class")).toContain(mark);
   });
 });

@@ -337,24 +337,38 @@ describe("random ships get created correctly", () => {
   test("ship has correct length", () => {
     expect(ship.len).toBe(len);
   });
-  // test("ship has 'x' axis or 'y'", () => {
-  //   expect(ship.getAxis().length).toBe(1);
-  // });
-  // test("ship's placement is valid for 100 times", () => {
-  //   for (let i = 0; i < 100; i++) {
-  //     const ship = player.getRandomShip(len);
-  //     expect(
-  //       player.checkPlacement(ship.getCreatePos(), len, ship.getAxis())
-  //     ).toBeTruthy();
-  //   }
-  // });
+  test("ship has 'x' axis or 'y' and not always the same", () => {
+    const randomAxises = [];
+    for (let i = 0; i < 100; i++) {
+      const ship = gameBoard.getRandomShip(len);
+      randomAxises.push(ship.axis);
+      expect(ship.axis).toMatch(/x|y/);
+    }
+    expect(randomAxises).toContain("x");
+    expect(randomAxises).toContain("y");
+  });
+  test("ship's placement is valid for 100 times", () => {
+    for (let i = 0; i < 100; i++) {
+      const ship = gameBoard.getRandomShip(len);
+      expect(
+        gameBoard.checkPlacement(ship.createPos, len, ship.axis)
+      ).toBeTruthy();
+    }
+  });
+});
 
-  // test("random ships dont have same axis always", () => {
-  //   const randomAxises = [];
-  //   for (let i = 0; i < 100; i++) {
-  //     randomAxises.push(getRandomAxis());
-  //   }
-  //   expect(randomAxises).toContain("x");
-  //   expect(randomAxises).toContain("y");
-  // });
+describe("game board randomizes correctly", () => {
+  const lengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+  beforeAll(() => {
+    gameBoard.randomize(lengths);
+  });
+  afterAll(() => {
+    gameBoard = GameBoard(gameBoardLen);
+  });
+  test("game board has correct number of ships", () => {
+    expect(gameBoard.ships.length).toBe(lengths.length);
+  });
+  test("game board throw an error if game board is to small for the given ships", () => {
+    expect(() => gameBoard.randomize(Array(100).fill(4))).toThrow();
+  });
 });

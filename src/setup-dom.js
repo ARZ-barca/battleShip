@@ -1,54 +1,44 @@
 import { gameBoardLen as len } from "./player";
 
 // returns a populated div we use as board for placing ship in
-function populatedSetupBoard() {
+function BoardDiv() {
   const div = document.createElement("div");
   for (let i = 0; i < len; i++) {
     for (let j = 0; j < len; j++) {
       const positionDiv = document.createElement("div");
-      positionDiv.classList.add("position", `p-${i}-${j}`);
+      positionDiv.setAttribute("data-row", i);
+      positionDiv.setAttribute("data-column", j);
       div.appendChild(positionDiv);
     }
   }
-  div.classList.add("game-board");
+  div.classList.add("board");
   return div;
 }
 
-// adds event to click on each element of board div
-function addEventToBoard(boardDiv, cb) {
-  [...boardDiv.children].forEach((element) => {
-    element.addEventListener("click", cb);
-  });
-}
-
-// marks a ship on board
-function markShipOnBoard(shipPositions, boardDiv) {
-  shipPositions.forEach((p) => {
-    const selector = `.p-${String(p).replace(",", "-")}`;
+// add mark to ship position's class
+function markShipOnBoard(ship, boardDiv, mark) {
+  Object.keys(ship.positions).forEach((p) => {
+    const position = p.split(",");
+    const selector = `*[data-row="${position[0]}"][data-column="${position[1]}"]`;
     const dom = boardDiv.querySelector(selector);
-    dom.classList.add("ship");
+    dom.classList.add(mark);
   });
 }
 
 // removes a ship from board
-function removeShipFromBoard(shipPositions, boardDiv) {
-  shipPositions.forEach((p) => {
-    const selector = `.p-${String(p).replace(",", "-")}`;
+function unmarkShipOnBoard(ship, boardDiv, mark) {
+  Object.keys(ship.positions).forEach((p) => {
+    const position = p.split(",");
+    const selector = `*[data-row="${position[0]}"][data-column="${position[1]}"]`;
     const dom = boardDiv.querySelector(selector);
-    dom.classList.remove("ship");
+    dom.classList.remove(mark);
   });
 }
 
 function clearBoardDiv(boardDiv) {
   [...boardDiv.children].forEach((element) => {
-    element.classList.remove("ship", "selected");
+    element.className = "";
   });
 }
 
-export {
-  populatedSetupBoard,
-  addEventToBoard,
-  markShipOnBoard,
-  removeShipFromBoard,
-  clearBoardDiv,
-};
+export { BoardDiv, markShipOnBoard, unmarkShipOnBoard, clearBoardDiv };
