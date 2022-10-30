@@ -1,12 +1,14 @@
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 :root {
   --board-len: 10;
 }
 
-.game-board {
+.board {
   display: grid;
   grid-template-columns: repeat(var(--board-len), 1fr);
   grid-template-rows: repeat(var(--board-len), 1fr);
@@ -15,7 +17,20 @@
   border: 2px solid black;
 }
 
-.game-board.finished {
+.board > * {
+  border: 0.5px solid rgb(77, 70, 70);
+}
+
+.board .ship {
+  background-color: rgba(0, 0, 0, 0.63);
+}
+
+.board .selected {
+  background-color: rgb(218, 163, 62);
+}
+
+/* 
+.board.finished {
   pointer-events: none;
 }
 
@@ -55,4 +70,4 @@
 
 .game-over {
   pointer-events: none;
-}
+} */
