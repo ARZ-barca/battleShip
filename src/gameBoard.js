@@ -60,15 +60,25 @@ const addCreateShip = (state) => ({
 
 // method for removing the ship (needs one arg)
 function removeShip(state, ship) {
-  // change positions arround the ship
-  const aroundPositions = getPositionsAroundShip(state, ship);
-  changeGameBoardPositions(state, aroundPositions, "empty");
-  // change ship's positions
-  const shipPositions = Object.keys(ship.positions);
-  changeGameBoardPositions(state, shipPositions, "empty");
   // remove ship from the game board ships
   const shipIndex = state.ships.indexOf(ship);
   state.ships.splice(shipIndex, 1);
+  // change positions arround the ship
+  const aroundPositions = getPositionsAroundShip(state, ship);
+  // don't remove if its arround another ship
+  const onlyAroundPosition = aroundPositions.filter((p) => {
+    let onlyAroundP = true;
+    state.ships.forEach((ship) => {
+      if (getPositionsAroundShip(state, ship).includes(String(p))) {
+        onlyAroundP = false;
+      }
+    });
+    return onlyAroundP;
+  });
+  changeGameBoardPositions(state, onlyAroundPosition, "empty");
+  // change ship's positions
+  const shipPositions = Object.keys(ship.positions);
+  changeGameBoardPositions(state, shipPositions, "empty");
 }
 
 // adds removeship method to an object
@@ -77,21 +87,6 @@ const addRemoveShip = (state) => ({
     removeShip(state, ship);
   },
 });
-
-// // method for repositioning the ship
-// function changeShipAxis(state, ship) {
-//   removeShip(state, ship);
-//   const shipCreatePos = ship.getCreatePos();
-//   const shipLen = ship.getLen();
-//   const newAxis = ship.getAxis() === "x" ? "y" : "x";
-//   const newShip = createShip(state, shipCreatePos, shipLen, newAxis);
-//   return newShip;
-// }
-
-// // adds changeShipAxix method to an object
-// const addChangeShipAxis = (state) => ({
-//   changeShipAxis: (ship, newAxis) => changeShipAxis(state, ship, newAxis),
-// });
 
 // method that checks for placement validity
 function checkPlacement(state, createPos, len, axis) {

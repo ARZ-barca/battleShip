@@ -80,10 +80,10 @@ describe("removing a ship", () => {
   let ship5;
   beforeAll(() => {
     ship1 = gameBoard.createShip([0, 0], 4, "x");
-    ship2 = gameBoard.createShip([9, 0], 4, "x");
-    ship3 = gameBoard.createShip([9, 0], 4, "x");
+    ship2 = gameBoard.createShip([3, 0], 4, "x");
+    ship3 = gameBoard.createShip([5, 0], 4, "x");
     ship4 = gameBoard.createShip([9, 0], 4, "x");
-    ship5 = gameBoard.createShip([9, 0], 4, "x");
+    ship5 = gameBoard.createShip([7, 0], 4, "x");
     gameBoard.removeShip(ship1);
     gameBoard.removeShip(ship2);
     gameBoard.removeShip(ship3);
@@ -114,87 +114,11 @@ describe("removing a ship", () => {
   test("game board has correct number of ships", () => {
     expect(gameBoard.ships.length).toBe(1);
   });
+
+  test("game board doesn't make around other ship's empty when they shuold be 'unavailable'", () => {
+    expect(gameBoard.positions[String([8, 0])]).toBe("unavailable");
+  });
 });
-
-// describe("changing a ship axis for a ship with original axis of 'x'", () => {
-//   let newShip;
-//   let ship1;
-//   beforeAll(() => {
-//     ship1 = gameBoard.createShip([0, 0], 4, "x");
-//     newShip = gameBoard.changeShipAxis(ship1);
-//   });
-//   afterAll(() => {
-//     gameBoard = GameBoard(gameBoardLen);
-//   });
-//   test("ship's origial create position is still 'ship'", () => {
-//     expect(gameBoard.getPositions()[String([0, 0])]).not.toBe("empty");
-//   });
-//   test("ship's origial place is 'empty'", () => {
-//     expect(gameBoard.getPositions()[String([0, 3])]).toBe("empty");
-//   });
-//   test("around ship's origial place is 'empty'", () => {
-//     expect(gameBoard.getPositions()[String([1, 4])]).toBe("empty");
-//     expect(gameBoard.getPositions()[String([0, 4])]).toBe("empty");
-//   });
-//   test("gameBoard doesn't contain the ship in its ships", () => {
-//     expect(gameBoard.getShips()).not.toContain(ship1);
-//   });
-//   test("ship's new place is 'ship'", () => {
-//     expect(gameBoard.getPositions()[String([1, 0])]).toBe("ship");
-//     expect(gameBoard.getPositions()[String([3, 0])]).toBe("ship");
-//   });
-//   test("around ship's new place is 'unavailable'", () => {
-//     expect(gameBoard.getPositions()[String([0, 1])]).toBe("unavailable");
-//     expect(gameBoard.getPositions()[String([4, 1])]).toBe("unavailable");
-//   });
-//   test("gameBoard does contain the new ship in its ships", () => {
-//     expect(gameBoard.getShips().length).toBe(1);
-//     expect(gameBoard.getShips()).toContain(newShip);
-//   });
-// });
-
-// describe("changing a ship axis for a ship with original axis of 'y'", () => {
-//   let newShip;
-//   let ship1;
-//   beforeAll(() => {
-//     ship1 = gameBoard.createShip([0, 0], 4, "y");
-//     newShip = gameBoard.changeShipAxis(ship1);
-//   });
-//   afterAll(() => {
-//     gameBoard = GameBoard(gameBoardLen);
-//   });
-//   test("ship's origial create position is still 'ship'", () => {
-//     expect(gameBoard.getPositions()[String([0, 0])]).not.toBe("empty");
-//   });
-//   test("ship's origial place is 'empty'", () => {
-//     expect(gameBoard.getPositions()[String([3, 0])]).toBe("empty");
-//   });
-//   test("around ship's origial place is 'empty'", () => {
-//     expect(gameBoard.getPositions()[String([4, 1])]).toBe("empty");
-//     expect(gameBoard.getPositions()[String([4, 0])]).toBe("empty");
-//   });
-//   test("gameBoard doesn't contain the ship in its ships", () => {
-//     expect(gameBoard.getShips()).not.toContain(ship1);
-//   });
-//   test("ship's new place is 'ship'", () => {
-//     expect(gameBoard.getPositions()[String([0, 1])]).toBe("ship");
-//     expect(gameBoard.getPositions()[String([0, 3])]).toBe("ship");
-//   });
-//   test("around ship's new place is 'unavailable'", () => {
-//     expect(gameBoard.getPositions()[String([1, 0])]).toBe("unavailable");
-//     expect(gameBoard.getPositions()[String([1, 4])]).toBe("unavailable");
-//   });
-//   test("gameBoard does contain the new ship in its ships", () => {
-//     expect(gameBoard.getShips().length).toBe(1);
-//     expect(gameBoard.getShips()).toContain(newShip);
-//   });
-
-//   test("gameBoard has correct number of positions after ship creation", () => {
-//     expect(Object.keys(gameBoard.getPositions()).length).toBe(
-//       gameBoardLen ** 2
-//     );
-//   });
-// });
 
 describe("check possibility of placing ships in different positions", () => {
   beforeAll(() => {
