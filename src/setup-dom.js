@@ -1,5 +1,9 @@
+import { gameBoardLen } from "./player";
+
+const len = gameBoardLen;
+
 // returns a populated div we use as board for placing ship in
-function BoardDiv(len) {
+function BoardDiv() {
   const div = document.createElement("div");
   for (let i = 0; i < len; i++) {
     for (let j = 0; j < len; j++) {

@@ -1,22 +1,18 @@
-import { BoardDiv, clearBoardDiv, markShipOnBoard } from "./setup-dom";
-import Player, { gameBoardLen } from "./player";
-import selectEvent, { removeSelectedShip } from "./ship-placement";
+import {
+  BoardDiv,
+  clearBoardDiv,
+  markShipOnBoard,
+  unmarkShipOnBoard,
+} from "./setup-dom";
+import Player, { gameBoardLen, AiPlayer } from "./player";
+import selectEvent, {
+  removeSelectedShip,
+  getSelectedShip,
+} from "./ship-placement";
+import attack from "./attack";
 
 // ships to be created lengths
 const shipsLenghts = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-
-// // changes a ship axis in board div and in player's board object if possible
-// function changeShipAxis(ship, player, boardDiv) {
-//   removeShip(ship, player, boardDiv);
-//   const createPos = ship.getCreatePos();
-//   const len = ship.getLen();
-//   const oldAxis = ship.getAxis();
-//   const newAxis = oldAxis === "x" ? "y" : "x";
-//   if (player.checkPlacement(createPos, len, newAxis))
-//     return createShip(player, boardDiv, createPos, len, newAxis);
-
-//   return createShip(player, boardDiv, createPos, len, oldAxis);
-// }
 
 // initialize the setup
 function initializeSetup(mainDiv) {
@@ -31,13 +27,18 @@ function initializeSetup(mainDiv) {
   randomButton.textContent = "random";
   randomButton.classList.add("random");
 
-  // const startButton = document.createElement("button");
-  // startButton.textContent = "start";
-  // startButton.classList.add("start");
+  const startButton = document.createElement("button");
+  startButton.textContent = "start";
+  startButton.classList.add("start");
+
+  // container for buttons
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("button-container");
+  buttonContainer.appendChild(randomButton);
+  buttonContainer.appendChild(startButton);
 
   mainDiv.appendChild(boardDivContainer);
-  mainDiv.appendChild(randomButton);
-  // mainDiv.appendChild(startButton);
+  mainDiv.appendChild(buttonContainer);
 
   // populate game board and board div with random ships
   player.gameBoard.randomize(shipsLenghts);
@@ -45,6 +46,7 @@ function initializeSetup(mainDiv) {
     markShipOnBoard(ship, playerBoardDiv, "ship");
   });
 
+  // player randomizes his board
   randomButton.addEventListener("click", () => {
     clearBoardDiv(playerBoardDiv);
     player.gameBoard.clear();
@@ -55,27 +57,105 @@ function initializeSetup(mainDiv) {
     removeSelectedShip();
   });
 
+  // when player tries to replace a ship
   [...playerBoardDiv.children].forEach((element) => {
     element.addEventListener("click", (e) =>
       selectEvent(e.target, player.gameBoard, playerBoardDiv)
     );
   });
 
-  // startButton.addEventListener("click", () => {
-  //   const aiPlayer = AiPlayer();
-  //   const aiBoardDiv = populatedSetupBoard();
-  //   populateBoardRandom(aiPlayer, aiBoardDiv, shipsLenghts);
-  //   mainDiv.innerHTML = "";
-  //   main(mainDiv, player, aiPlayer, playerBoardDiv, aiBoardDiv);
-  // });
+  startButton.addEventListener("click", () => {
+    const aiPlayer = AiPlayer();
+    const aiBoardDiv = BoardDiv(gameBoardLen);
+    aiPlayer.gameBoard.randomize(shipsLenghts);
+    aiPlayer.gameBoard.ships.forEach((ship) => {
+      markShipOnBoard(ship, aiBoardDiv, "ship");
+    });
+
+    mainDiv.innerHTML = "";
+
+    // if player selected a ship before starting the game
+    // create the ship because it was removed
+    const selectedShip = getSelectedShip();
+    if (selectedShip) {
+      // a ship was selected before starting the game
+      unmarkShipOnBoard(selectedShip, playerBoardDiv, "selected");
+      player.gameBoard.createShip(
+        selectedShip.createPos,
+        selectedShip.len,
+        selectedShip.axis
+      );
+    }
+    // to ignore click events after the game started
+    playerBoardDiv.classList.add("player");
+    // to hide ai ships
+    aiBoardDiv.classList.add("ai");
+
+    boardDivContainer.appendChild(playerBoardDiv);
+    boardDivContainer.appendChild(aiBoardDiv);
+
+    mainDiv.appendChild(boardDivContainer);
+
+    // when player attacks ai
+    [...aiBoardDiv.children].forEach((element) => {
+      element.addEventListener("click", (e) => {
+        // player attack positioon
+        const attackPosition = [
+          e.target.getAttribute("data-row"),
+          e.target.getAttribute("data-column"),
+        ];
+
+        attack(player, aiPlayer, attackPosition, e.target);
+        if (aiPlayer.gameBoard.isGameOver()) {
+          // player won and game ends
+          playerBoardDiv.classList.add("over");
+          aiBoardDiv.classList.add("over");
+          gameOver("you", mainDiv);
+        } else {
+          // game continues
+
+          // ai attack position
+          const aiAttackPosition = aiPlayer.getAttackPosition().split(",");
+
+          // player board elemnt to mark
+          const selector = `*[data-row="${aiAttackPosition[0]}"][data-column="${aiAttackPosition[1]}"]`;
+          const positionDiv = playerBoardDiv.querySelector(selector);
+
+          attack(aiPlayer, player, aiAttackPosition, positionDiv);
+          if (player.gameBoard.isGameOver()) {
+            // ai won and game ends
+            playerBoardDiv.classList.add("over");
+            aiBoardDiv.classList.add("over");
+            gameOver("ai", mainDiv);
+          }
+        }
+      });
+    });
+  });
+}
+
+function gameOver(winnerName, mainDiv) {
+  const gameOverDiv = document.createElement("div");
+  gameOverDiv.classList.add("game-over");
+
+  const winnerText = document.createElement("p");
+  winnerText.textContent = `${winnerName} won`;
+  winnerText.classList.add("winner-text");
+
+  const playAgainButton = document.createElement("button");
+  playAgainButton.textContent = `Play Again`;
+  playAgainButton.classList.add("play-again");
+
+  gameOverDiv.appendChild(winnerText);
+  gameOverDiv.appendChild(playAgainButton);
+
+  playAgainButton.addEventListener("click", () => {
+    mainDiv.innerHTML = "";
+    initializeSetup(mainDiv);
+  });
+  mainDiv.appendChild(gameOverDiv);
 }
 
 export default initializeSetup;
 
-export {
-  shipsLenghts,
-  // createShip,
-  // removeShip,
-  // changeShipAxis,
-  // populateBoardRandom,
-};
+export { shipsLenghts };

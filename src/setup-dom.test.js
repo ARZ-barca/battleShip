@@ -3,7 +3,7 @@
  */
 /* eslint-disable no-undef */
 
-import { gameBoardLen as len } from "./player";
+import { gameBoardLen, gameBoardLen as len } from "./player";
 import {
   BoardDiv,
   markShipOnBoard,
@@ -86,7 +86,7 @@ describe("clearing a board div", () => {
   const ship4 = Ship([0, 6], 4, "y");
   const mark = "ship";
 
-  const boardDiv = BoardDiv();
+  const boardDiv = BoardDiv(gameBoardLen);
   markShipOnBoard(ship1, boardDiv, mark);
   markShipOnBoard(ship2, boardDiv, mark);
   markShipOnBoard(ship3, boardDiv, mark);

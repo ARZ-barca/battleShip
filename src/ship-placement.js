@@ -10,9 +10,12 @@ const selectedMark = "selected";
 
 let selectedShip;
 
-//
 function removeSelectedShip() {
   selectedShip = undefined;
+}
+
+function getSelectedShip() {
+  return selectedShip;
 }
 
 function selectEvent(element, gameBoard, boardDiv) {
@@ -91,5 +94,5 @@ function selectEvent(element, gameBoard, boardDiv) {
 }
 
 // export default boardActivate;
-export { removeSelectedShip };
+export { removeSelectedShip, getSelectedShip };
 export default selectEvent;

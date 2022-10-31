@@ -21,8 +21,6 @@ function attack(state, targetPlayer, position) {
       }
     });
   }
-
-  // return ship;
 }
 
 // add attack method to an object
