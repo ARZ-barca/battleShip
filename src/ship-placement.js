@@ -1,8 +1,3 @@
-// import markBoardDiv from "./game-dom";
-// import { getHitShip } from "./gameBoard";
-// import { gameBoardLen } from "./player";
-// import { predictShipPositions } from "./ships";
-
 import { markShipOnBoard, unmarkShipOnBoard } from "./setup-dom";
 
 const shipMark = "ship";
