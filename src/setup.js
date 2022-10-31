@@ -37,7 +37,23 @@ function initializeSetup(mainDiv) {
   buttonContainer.appendChild(randomButton);
   buttonContainer.appendChild(startButton);
 
+  // rules for ship selection
+  // select a ship by clicking on it
+  // change ship axis by clicking on it again
+  // move ship by clicking on empty spot
+  // you can't place ship next to each other
+
+  const rules = document.createElement("ol");
+  rules.classList.add("rules");
+  rules.innerHTML = `
+    <li>select a ship by clicking on it</li>
+    <li>change ship axis by clicking on it again</li>
+    <li>move ship by clicking on an empty spot</li>
+    <li>you can't place ships next to each other</li>
+  `;
+
   mainDiv.appendChild(boardDivContainer);
+  mainDiv.appendChild(rules);
   mainDiv.appendChild(buttonContainer);
 
   // populate game board and board div with random ships
