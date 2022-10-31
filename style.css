@@ -1,3 +1,4 @@
+/*  setup */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,68 +7,162 @@
 
 :root {
   --board-len: 10;
+  --board-color: aqua;
+  --ship-color: rgb(49, 44, 44);
+  --hit-color: rgba(245, 77, 71, 0.87);
+  --miss-color: rgba(46, 141, 141, 0.829);
+  --font-color: rgb(33, 45, 46);
+  --selected-color: rgb(218, 163, 62);
+}
+
+html {
+  font-size: 16px;
+  background-color: lightblue;
+  font-family: "Press Start 2P", cursive;
+}
+
+/* header */
+h1.header {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 50px;
+  margin-top: 30px;
+  color: var(--font-color);
+}
+
+/* board structure */
+
+.board-container {
+  display: flex;
+  justify-content: center;
+  column-gap: 100px;
+  row-gap: 50px;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(var(--board-len), 1fr);
   grid-template-rows: repeat(var(--board-len), 1fr);
-  width: min(400px, 100vw);
-  height: min(400px, 100vw);
-  border: 2px solid black;
+  width: min(300px, 100vw);
+  height: min(300px, 100vw);
+  border: 2px solid rgb(20, 94, 112);
+  background-color: var(--board-color);
 }
 
 .board > * {
-  border: 0.5px solid rgb(77, 70, 70);
+  border: 1px solid rgb(20, 94, 112);
 }
 
-.board .ship {
-  background-color: rgba(0, 0, 0, 0.63);
+/* buttons */
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
 }
 
-.board .selected {
-  background-color: rgb(218, 163, 62);
+.button-container button {
+  font-family: inherit;
+  font-size: 1rem;
+
+  background-color: aliceblue;
+
+  outline: none;
+  box-shadow: none;
+  border-radius: 5px;
+  padding: 10px;
+
+  color: var(--font-color);
+  border: 1px solid var(--font-color);
 }
 
-/* 
-.board.finished {
-  pointer-events: none;
+.button-container button:hover {
+  background-color: antiquewhite;
 }
 
-.position {
-  border: 1px solid black;
-}
-
-.ship {
-  background-color: green;
-}
-
-.position.hit,
-.position.miss,
-.position.invalid {
-  pointer-events: none;
-}
-
-.position.ship.selected {
-  background-color: orange;
-}
-
-.position.hit {
-  background-color: red;
-}
-
-.position.miss {
-  background-color: yellowgreen;
-}
-
-.position.invalid {
-  background-color: gray;
-}
-
-.selectable {
+/* game play */
+.board:not(.ai) .ship {
+  background-color: var(--ship-color);
   cursor: pointer;
 }
 
-.game-over {
+.board.ai * {
+  cursor: pointer;
+}
+
+.board.ai *:hover {
+  background-color: rgb(15, 214, 221);
+}
+
+.board .ship.selected {
+  background-color: var(--selected-color);
+}
+
+.player.board {
   pointer-events: none;
+}
+
+.board.player .miss,
+.board.ai .miss {
+  background-color: var(--miss-color);
+  pointer-events: none;
+}
+
+.board.player .hit,
+.board.ai .hit {
+  background-color: var(--hit-color);
+  pointer-events: none;
+}
+
+.board.over {
+  pointer-events: none;
+}
+
+/* game over */
+.game-over {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+
+  border: 1px solid rgb(65, 64, 64);
+  border-radius: 5px;
+
+  background-color: aliceblue;
+  width: fit-content;
+  margin: auto;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.game-over button {
+  font-size: 0.8rem;
+  font-family: inherit;
+  padding: 7px;
+  background-color: rgb(218, 162, 89);
+  color: antiquewhite;
+  border: none;
+  border-radius: 5px;
+}
+
+.game-over button:hover {
+  background-color: antiquewhite;
+  color: rgb(218, 162, 89);
+}
+/* 
+@media only screen and (max-width: 600px) {
+  h1.header {
+    font-size: 2rem;
+  }
 } */
+
+@media only screen and (max-width: 350px) {
+  /* .button-container button {
+    font-size: 0.7rem;
+  } */
+  h1.header {
+    font-size: 1.8rem;
+  }
+}
