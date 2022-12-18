@@ -183,6 +183,7 @@ h1.header {
   border-radius: 5px;
   color: white;
   border: 1px solid rgb(65, 64, 64);
+  font-size: 0.7rem;
 }
 
 .miss-guid {
