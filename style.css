@@ -10,8 +10,9 @@
 :root {
   --board-len: 10;
   --board-color: aqua;
-  --ship-color: rgb(49, 44, 44);
-  --hit-color: rgba(245, 77, 71, 0.87);
+  --ship-color: #1f2937;
+  --hit-color: #d97706;
+  --sunk-color: #b91c1c;
   --miss-color: rgba(46, 141, 141, 0.829);
   --font-color: rgb(33, 45, 46);
   --selected-color: rgb(218, 163, 62);
@@ -116,6 +117,11 @@ h1.header {
 .board.ai .hit {
   background-color: var(--hit-color);
   pointer-events: none;
+}
+
+.board.player .hit.sunk,
+.board.ai .hit.sunk {
+  background-color: var(--sunk-color);
 }
 
 .board.over {
