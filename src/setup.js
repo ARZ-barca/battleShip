@@ -138,7 +138,7 @@ function initializeSetup(mainDiv) {
           aiBoardDiv.classList.add("over");
           gameOver("you", mainDiv);
         } else {
-          // game continues
+          // game continues and ai atacks
 
           // ai attack position
           const aiAttackPosition = aiPlayer.getAttackPosition().split(",");
