@@ -121,7 +121,7 @@ function initializeSetup(mainDiv) {
           e.target.getAttribute("data-column"),
         ];
 
-        attack(player, aiPlayer, attackPosition, e.target);
+        attack(player, aiPlayer, attackPosition, e.target, aiBoardDiv);
         if (aiPlayer.gameBoard.isGameOver()) {
           // player won and game ends
           playerBoardDiv.classList.add("over");
@@ -137,7 +137,13 @@ function initializeSetup(mainDiv) {
           const selector = `*[data-row="${aiAttackPosition[0]}"][data-column="${aiAttackPosition[1]}"]`;
           const positionDiv = playerBoardDiv.querySelector(selector);
 
-          attack(aiPlayer, player, aiAttackPosition, positionDiv);
+          attack(
+            aiPlayer,
+            player,
+            aiAttackPosition,
+            positionDiv,
+            playerBoardDiv
+          );
           if (player.gameBoard.isGameOver()) {
             // ai won and game ends
             playerBoardDiv.classList.add("over");
