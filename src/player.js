@@ -35,7 +35,6 @@ function randomElement(array) {
   return array[i];
 }
 
-// const prevAttack;
 // method for ai to choose an attack position
 function getAttackPosition(state) {
   return randomElement(state.availableShots);

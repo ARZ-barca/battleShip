@@ -112,6 +112,16 @@ function initializeSetup(mainDiv) {
 
     mainDiv.appendChild(boardDivContainer);
 
+    // guides for the game
+    const guidDiv = document.createElement("div");
+    guidDiv.classList.add("guid-container");
+    guidDiv.innerHTML = `
+        <div class="miss-guid guid">miss</div>
+        <div class="hit-guid guid">hit</div>
+        <div class="sunk-guid guid">sunk</div>
+    `;
+    mainDiv.appendChild(guidDiv);
+
     // when player attacks ai
     [...aiBoardDiv.children].forEach((element) => {
       element.addEventListener("click", (e) => {
@@ -133,7 +143,7 @@ function initializeSetup(mainDiv) {
           // ai attack position
           const aiAttackPosition = aiPlayer.getAttackPosition().split(",");
 
-          // player board elemnt to mark
+          // player board element to mark
           const selector = `*[data-row="${aiAttackPosition[0]}"][data-column="${aiAttackPosition[1]}"]`;
           const positionDiv = playerBoardDiv.querySelector(selector);
 

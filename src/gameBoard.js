@@ -227,7 +227,6 @@ function GameBoard(gameBoardLen) {
     },
     ...addCreateShip(state),
     ...addRemoveShip(state),
-    // ...addChangeShipAxis(state),
     ...addCheckPlacement(state),
     ...addGetHitShip(state),
     ...addGetHit(state),

@@ -166,6 +166,37 @@ h1.header {
   border-radius: 50%;
 }
 
+/* guids */
+.guid-container {
+  display: flex;
+  gap: 20px;
+  width: fit-content;
+  margin: auto;
+  margin-bottom: 20px;
+}
+
+.guid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  border: 1px solid rgb(65, 64, 64);
+}
+
+.miss-guid {
+  background-color: var(--miss-color);
+}
+
+.hit-guid {
+  background-color: var(--hit-color);
+}
+
+.sunk-guid {
+  background-color: var(--sunk-color);
+}
+
 /* game over */
 .game-over {
   display: flex;
