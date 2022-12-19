@@ -38,8 +38,8 @@ function getImpossiblePositions(pos, gameBoard) {
 
       String([+posList[0] + 1, +posList[1] + 1]),
       String([+posList[0] + 1, +posList[1] - 1]),
-      String([+posList[0] - 1, posList[1] + 1]),
-      String([+posList[0] - 1, posList[1] - 1]),
+      String([+posList[0] - 1, +posList[1] + 1]),
+      String([+posList[0] - 1, +posList[1] - 1]),
     ];
   }
   if (
